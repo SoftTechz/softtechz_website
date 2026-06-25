@@ -1,0 +1,2182 @@
+<!DOCTYPE html>
+<html lang="en" data-mode="dark">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<meta name="description" content="SoftTechz — Next-Gen Digital Studio. We build web & mobile experiences that grow your business."/>
+<title>SoftTechz 🌐 | Next-Gen Digital Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&family=Syne:wght@700;800&display=swap" rel="stylesheet"/>
+<style>
+/* =====================================================
+   CSS VARIABLES + THEME SYSTEM
+===================================================== */
+:root {
+  --c1:#00D4FF; --c1r:0,212,255;
+  --c2:#7C3AED; --c2r:124,58,237;
+  --c3:#FF6B2B; --c3r:255,107,43;
+}
+[data-mode="dark"]{
+  --bg:#050A14; --bg2:#080F1E; --bg3:#0C1628;
+  --card:#0D1B2A; --card2:#112035;
+  --glass:rgba(8,15,30,.75);
+  --gb:rgba(0,212,255,.1);
+  --t1:#F0F9FF; --t2:#94A3B8; --t3:#334155;
+  --line:rgba(0,212,255,.08);
+  --sh:0 20px 60px rgba(0,0,0,.6);
+}
+[data-mode="light"]{
+  --bg:#F0F7FF; --bg2:#E2EEFF; --bg3:#D9E8FF;
+  --card:#FFFFFF; --card2:#F1F8FF;
+  --glass:rgba(240,247,255,.85);
+  --gb:rgba(0,150,200,.12);
+  --t1:#0A1628; --t2:#475569; --t3:#94A3B8;
+  --line:rgba(0,150,200,.1);
+  --sh:0 20px 60px rgba(0,0,0,.12);
+}
+
+/* =====================================================
+   RESET + BASE
+===================================================== */
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;overflow-x:hidden;}
+body{
+  font-family:'Space Grotesk',sans-serif;
+  background:var(--bg);
+  color:var(--t1);
+  transition:background .4s,color .4s;
+  overflow-x:hidden;
+  cursor:none;
+}
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--c1);border-radius:2px;}
+.mono{font-family:'Space Mono',monospace;}
+.syne{font-family:'Syne',sans-serif;}
+
+/* =====================================================
+   CURSOR
+===================================================== */
+#cur-d{
+  width:10px;height:10px;
+  background:var(--c1);border-radius:50%;
+  position:fixed;top:0;left:0;pointer-events:none;z-index:99999;
+  transform:translate(-50%,-50%);
+  box-shadow:0 0 12px var(--c1),0 0 24px rgba(var(--c1r),.4);
+  mix-blend-mode:screen;
+  transition:width .2s,height .2s,background .2s;
+}
+#cur-r{
+  width:40px;height:40px;
+  border:1.5px solid rgba(var(--c1r),.45);
+  border-radius:50%;
+  position:fixed;top:0;left:0;pointer-events:none;z-index:99998;
+  transform:translate(-50%,-50%);
+  transition:top .1s ease,left .1s ease,width .3s,height .3s,border-color .3s;
+}
+body.h-cur #cur-d{width:18px;height:18px;background:var(--c2);}
+body.h-cur #cur-r{width:54px;height:54px;border-color:rgba(var(--c2r),.5);}
+
+/* cursor trail */
+.cur-trail{
+  position:fixed;pointer-events:none;z-index:99997;
+  width:5px;height:5px;border-radius:50%;
+  background:var(--c1);opacity:.4;
+  transform:translate(-50%,-50%);
+  transition:opacity .5s;
+}
+
+/* =====================================================
+   LOADER
+===================================================== */
+#loader{
+  position:fixed;inset:0;z-index:100000;
+  background:#000;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:20px;
+  transition:opacity .8s ease;
+}
+#ldr-canvas{position:absolute;inset:0;}
+#ldr-logo{
+  position:relative;z-index:1;
+  font-family:'Syne',sans-serif;font-weight:800;
+  font-size:clamp(2rem,8vw,4.5rem);
+  letter-spacing:.1em;
+  background:linear-gradient(135deg,var(--c1),var(--c2),var(--c3));
+  background-size:200%;
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  animation:ldr-in 1.8s ease forwards,grad-shift 3s ease infinite;
+  text-align:center;opacity:0;
+}
+@keyframes ldr-in{0%{opacity:0;filter:blur(30px);transform:scale(.6);}80%{opacity:1;filter:blur(0);transform:scale(1.03);}100%{opacity:1;filter:blur(0);transform:scale(1);}}
+@keyframes grad-shift{0%{background-position:0%;}50%{background-position:100%;}100%{background-position:0%;}}
+#ldr-sub{
+  position:relative;z-index:1;opacity:0;
+  font-family:'Space Mono',monospace;font-size:.7rem;
+  color:var(--c1);letter-spacing:.3em;text-transform:uppercase;
+  animation:fade-in .5s 1.6s forwards;
+}
+#ldr-bar{
+  position:relative;z-index:1;
+  width:200px;height:2px;background:rgba(255,255,255,.08);
+  border-radius:999px;overflow:hidden;opacity:0;
+  animation:fade-in .3s 1.8s forwards;
+}
+#ldr-fill{
+  height:100%;width:0%;
+  background:linear-gradient(90deg,var(--c1),var(--c2));
+  animation:ldr-prog 1.2s 1.9s cubic-bezier(.4,0,.2,1) forwards;
+}
+@keyframes ldr-prog{to{width:100%;}}
+@keyframes fade-in{to{opacity:1;}}
+
+/* =====================================================
+   OFFER BANNER
+===================================================== */
+#offer-bar{
+  background:linear-gradient(90deg,var(--c2),var(--c1));
+  padding:8px 16px;text-align:center;color:#fff;
+  font-size:.78rem;font-weight:600;letter-spacing:.03em;
+  display:flex;align-items:center;justify-content:center;gap:12px;
+  position:relative;z-index:300;overflow:hidden;
+}
+#offer-bar::before{
+  content:'';position:absolute;inset:0;
+  background:repeating-linear-gradient(90deg,transparent,transparent 60px,rgba(255,255,255,.04) 60px,rgba(255,255,255,.04) 61px);
+}
+.bar-badge{
+  background:rgba(255,255,255,.18);padding:2px 10px;
+  border-radius:999px;font-family:'Space Mono',monospace;
+  font-size:.6rem;letter-spacing:.2em;
+  animation:glw 2s ease-in-out infinite;
+}
+@keyframes glw{0%,100%{box-shadow:0 0 6px rgba(255,255,255,.2);}50%{box-shadow:0 0 18px rgba(255,255,255,.5);}}
+
+/* =====================================================
+   NAVBAR
+===================================================== */
+#nav{
+  position:sticky;top:0;z-index:290;
+  background:var(--glass);
+  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  border-bottom:1px solid var(--line);
+  transition:box-shadow .3s,top .3s;
+}
+#nav.sc{box-shadow:0 4px 40px rgba(0,0,0,.35);}
+.nav-in{
+  max-width:1300px;margin:0 auto;padding:0 1.5rem;
+  display:flex;align-items:center;justify-content:space-between;
+  height:62px;
+}
+.logo{display:flex;align-items:center;gap:8px;text-decoration:none;}
+.logo-box{
+  width:34px;height:34px;border-radius:9px;
+  background:linear-gradient(135deg,var(--c1),var(--c2));
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 0 16px rgba(var(--c1r),.4);
+}
+.logo-txt{
+  font-family:'Syne',sans-serif;font-weight:800;font-size:1.25rem;
+  background:linear-gradient(135deg,var(--c1),var(--c2));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 0 10px rgba(var(--c1r),.3));
+}
+.nav-links{display:flex;gap:28px;align-items:center;}
+.nl{
+  font-size:.85rem;font-weight:500;color:var(--t2);
+  text-decoration:none;letter-spacing:.03em;
+  position:relative;transition:color .2s;
+}
+.nl::after{
+  content:'';position:absolute;bottom:-4px;left:0;
+  width:0;height:1.5px;background:var(--c1);
+  box-shadow:0 0 6px var(--c1);
+  transition:width .3s;
+}
+.nl:hover{color:var(--t1);}
+.nl:hover::after{width:100%;}
+.nav-r{display:flex;align-items:center;gap:10px;}
+.icon-btn{
+  width:36px;height:36px;border:1.5px solid var(--line);border-radius:8px;
+  background:none;display:flex;align-items:center;justify-content:center;
+  color:var(--t2);cursor:none;transition:all .2s;
+}
+.icon-btn:hover{border-color:var(--c1);color:var(--c1);}
+.btn-pill{
+  padding:9px 22px;border-radius:8px;font-family:'Space Grotesk',sans-serif;
+  font-weight:700;font-size:.82rem;letter-spacing:.05em;
+  text-transform:uppercase;text-decoration:none;border:none;cursor:none;
+  display:inline-flex;align-items:center;gap:8px;
+  transition:all .3s cubic-bezier(.4,0,.2,1);
+}
+.btn-grad{
+  background:linear-gradient(135deg,var(--c1),var(--c2));
+  color:#fff;box-shadow:0 0 0 rgba(var(--c1r),0);
+}
+.btn-grad:hover{
+  box-shadow:0 6px 28px rgba(var(--c1r),.45),0 0 50px rgba(var(--c1r),.15);
+  transform:translateY(-2px);
+}
+.btn-ghost{
+  background:transparent;color:var(--t1);
+  border:1.5px solid rgba(var(--c1r),.25);
+}
+.btn-ghost:hover{border-color:var(--c1);color:var(--c1);box-shadow:0 0 20px rgba(var(--c1r),.15);}
+#status-pill{
+  padding:3px 11px;border-radius:999px;font-size:.6rem;font-weight:700;
+  font-family:'Space Mono',monospace;letter-spacing:.15em;
+  display:inline-flex;align-items:center;gap:5px;
+}
+.sdot{width:6px;height:6px;border-radius:50%;animation:sp 1.5s infinite;}
+@keyframes sp{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.5;transform:scale(1.5);}}
+
+/* =====================================================
+   MOBILE NAV
+===================================================== */
+#mob-nav{
+  position:fixed;inset:0;z-index:285;
+  background:var(--bg2);
+  display:flex;flex-direction:column;padding:2rem;
+  transform:translateX(110%);
+  transition:transform .45s cubic-bezier(.4,0,.2,1);
+}
+#mob-nav.open{transform:none;}
+.mob-link{
+  display:block;padding:14px 16px;border-radius:10px;
+  font-size:1.1rem;font-weight:700;color:var(--t1);
+  text-decoration:none;border-bottom:1px solid var(--line);
+  transition:color .2s,background .2s;
+}
+.mob-link:hover{color:var(--c1);background:rgba(var(--c1r),.06);}
+
+/* =====================================================
+   HERO
+===================================================== */
+#hero{
+  position:relative;min-height:100svh;
+  display:flex;align-items:center;overflow:hidden;
+}
+#hero-cv{position:absolute;inset:0;z-index:0;}
+.h-grid{
+  position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(var(--c1r),.04) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(var(--c1r),.04) 1px,transparent 1px);
+  background-size:60px 60px;
+  animation:grid-drift 30s linear infinite;
+}
+@keyframes grid-drift{0%{background-position:0 0;}100%{background-position:60px 60px;}}
+.h-radial{
+  position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse 70% 70% at 30% 50%,rgba(var(--c1r),.07),transparent),
+             radial-gradient(ellipse 50% 60% at 80% 30%,rgba(var(--c2r),.06),transparent);
+  animation:radial-breathe 8s ease-in-out infinite;
+}
+@keyframes radial-breathe{0%,100%{opacity:1;}50%{opacity:.6;}}
+.hero-wrap{
+  max-width:1300px;margin:0 auto;padding:0 1.5rem;
+  width:100%;position:relative;z-index:2;
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:4rem;align-items:center;
+}
+.hero-tag{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(var(--c1r),.08);
+  border:1px solid rgba(var(--c1r),.2);
+  padding:5px 14px;border-radius:999px;
+  font-family:'Space Mono',monospace;font-size:.62rem;
+  letter-spacing:.2em;color:var(--c1);margin-bottom:1.5rem;
+}
+.htag-dot{
+  width:7px;height:7px;border-radius:50%;background:var(--c1);
+  box-shadow:0 0 8px var(--c1);animation:sp 1.5s infinite;
+}
+.hero-h{
+  font-family:'Syne',sans-serif;font-weight:800;
+  font-size:clamp(2.6rem,5.5vw,4.8rem);
+  line-height:1.02;letter-spacing:-.03em;
+  margin-bottom:1.5rem;
+}
+.grad-txt{
+  background:linear-gradient(135deg,var(--c1) 0%,var(--c2) 50%,var(--c3) 100%);
+  background-size:200%;
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  animation:grad-shift 4s ease infinite;
+}
+#tw-text{
+  font-family:'Space Mono',monospace;font-size:clamp(.9rem,2vw,1.1rem);
+  color:var(--t2);min-height:2em;line-height:1.5;
+  margin-bottom:2.5rem;
+}
+#tw-cur{
+  display:inline-block;width:2px;height:1.1em;
+  background:var(--c1);vertical-align:middle;
+  animation:blink .8s step-end infinite;
+}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0;}}
+.hero-btns{display:flex;flex-wrap:wrap;gap:14px;margin-bottom:3rem;}
+.hero-stats{
+  display:flex;gap:2.5rem;flex-wrap:wrap;
+  padding-top:2rem;border-top:1px solid var(--line);
+}
+.hs-num{
+  font-family:'Syne',sans-serif;font-size:2rem;font-weight:800;
+  background:linear-gradient(135deg,var(--c1),var(--c2));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 0 12px rgba(var(--c1r),.4));
+}
+.hs-lbl{font-family:'Space Mono',monospace;font-size:.58rem;color:var(--t3);letter-spacing:.15em;margin-top:2px;}
+
+/* HERO RIGHT — Device Mockup */
+.hero-device{position:relative;}
+.device-laptop{
+  width:100%;max-width:480px;
+  background:var(--card);border:2px solid rgba(var(--c1r),.15);
+  border-radius:16px;padding:12px 12px 4px;
+  box-shadow:0 0 0 1px rgba(var(--c1r),.06),0 40px 80px rgba(0,0,0,.5),0 0 60px rgba(var(--c1r),.08);
+  position:relative;
+}
+.device-screen{
+  background:var(--bg2);border-radius:8px;overflow:hidden;
+  aspect-ratio:16/10;position:relative;
+}
+.device-code{
+  font-family:'Space Mono',monospace;font-size:.65rem;
+  color:var(--c1);padding:1rem;line-height:1.9;
+  white-space:pre;overflow:hidden;
+}
+.device-base{
+  height:14px;background:rgba(var(--c1r),.06);
+  border-radius:0 0 12px 12px;margin-top:4px;
+}
+.device-float{
+  position:absolute;
+  background:var(--card2);border:1px solid rgba(var(--c1r),.2);
+  border-radius:10px;padding:.75rem 1rem;
+  font-family:'Space Mono',monospace;font-size:.7rem;
+  box-shadow:0 10px 30px rgba(0,0,0,.3);
+  white-space:nowrap;
+}
+.df1{bottom:-20px;right:-20px;animation:float-a 3s ease-in-out infinite;}
+.df2{top:-15px;left:-15px;animation:float-a 3.5s ease-in-out infinite .5s;}
+@keyframes float-a{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);}}
+
+/* floating code snippets */
+.f-code{
+  position:absolute;pointer-events:none;
+  font-family:'Space Mono',monospace;font-size:.6rem;
+  color:rgba(var(--c1r),.3);white-space:nowrap;
+  animation:f-rise 14s linear infinite;
+}
+@keyframes f-rise{
+  0%{transform:translateY(0);opacity:0;}
+  10%{opacity:1;}80%{opacity:.4;}
+  100%{transform:translateY(-100px);opacity:0;}
+}
+
+/* =====================================================
+   SECTION BASE
+===================================================== */
+.sec{padding:6rem 0;}
+.sec-alt{background:var(--bg2);}
+.container{max-width:1300px;margin:0 auto;padding:0 1.5rem;}
+.sec-tag{
+  font-family:'Space Mono',monospace;font-size:.6rem;
+  letter-spacing:.3em;color:var(--c1);text-transform:uppercase;
+  display:inline-flex;align-items:center;gap:8px;margin-bottom:12px;
+}
+.sec-tag::before{content:'';display:block;width:22px;height:1.5px;background:var(--c1);box-shadow:0 0 6px var(--c1);}
+.sec-h{
+  font-family:'Syne',sans-serif;font-weight:800;
+  font-size:clamp(1.8rem,4vw,3.2rem);
+  letter-spacing:-.02em;line-height:1.1;
+}
+.glow-line{height:1px;border:none;background:linear-gradient(90deg,transparent,var(--c1),var(--c2),transparent);opacity:.2;margin:0;}
+
+/* =====================================================
+   SERVICES
+===================================================== */
+.svc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px;}
+.svc-card{
+  background:var(--card);border:1px solid var(--line);
+  border-radius:16px;padding:2rem 1.75rem;
+  position:relative;overflow:hidden;
+  transition:all .4s cubic-bezier(.4,0,.2,1);
+}
+.svc-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--c1),var(--c2));
+  transform:scaleX(0);transform-origin:left;
+  transition:transform .4s;
+}
+.svc-card::after{
+  content:'';position:absolute;
+  top:-60%;left:-60%;width:80%;height:80%;
+  background:radial-gradient(circle,rgba(var(--c1r),.06),transparent);
+  transition:all .5s;
+}
+.svc-card:hover{
+  transform:translateY(-8px);border-color:rgba(var(--c1r),.25);
+  box-shadow:0 20px 50px rgba(0,0,0,.3),0 0 30px rgba(var(--c1r),.06);
+}
+.svc-card:hover::before{transform:scaleX(1);}
+.svc-card:hover::after{top:-20%;left:-20%;}
+.svc-ico{
+  width:50px;height:50px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:1.25rem;position:relative;z-index:1;
+  transition:transform .3s;
+}
+.svc-card:hover .svc-ico{transform:scale(1.08) rotate(-3deg);}
+.t-tag{
+  display:inline-block;padding:3px 8px;
+  background:rgba(var(--c1r),.1);border:1px solid rgba(var(--c1r),.2);
+  border-radius:4px;font-family:'Space Mono',monospace;
+  font-size:.58rem;letter-spacing:.1em;color:var(--c1);margin:2px;
+}
+
+/* =====================================================
+   PROJECTS (with Terminal Animation)
+===================================================== */
+.proj-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:18px;}
+.proj-card{
+  border-radius:20px;overflow:hidden;
+  position:relative;aspect-ratio:4/3;cursor:none;
+  transition:transform .4s cubic-bezier(.4,0,.2,1);
+}
+.proj-card:hover{transform:scale(1.02);}
+.proj-img{
+  width:100%;height:100%;object-fit:cover;
+  filter:saturate(.75) brightness(.8);
+  transition:filter .5s,transform .5s;
+}
+.proj-card:hover .proj-img{filter:saturate(1) brightness(.65);transform:scale(1.06);}
+.proj-ov{
+  position:absolute;inset:0;
+  background:linear-gradient(to top,rgba(5,10,20,.97) 0%,rgba(5,10,20,.5) 55%,transparent 100%);
+  display:flex;flex-direction:column;justify-content:flex-end;
+  padding:1.5rem;
+  opacity:0;transition:opacity .4s;
+}
+.proj-card:hover .proj-ov{opacity:1;}
+.p-stacks{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px;}
+.p-num{
+  position:absolute;top:1rem;left:1rem;
+  font-family:'Space Mono',monospace;font-size:.65rem;
+  color:rgba(255,255,255,.5);letter-spacing:.1em;
+}
+.p-launch{
+  position:absolute;top:1rem;right:1rem;
+  width:36px;height:36px;border-radius:50%;
+  background:rgba(var(--c1r),.15);
+  border:1px solid rgba(var(--c1r),.3);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--c1);opacity:0;
+  transform:translateY(-8px);
+  transition:all .3s;
+}
+.proj-card:hover .p-launch{opacity:1;transform:none;}
+.p-launch:hover{background:var(--c1);color:#000;}
+
+/* =====================================================
+   TERMINAL OVERLAY
+===================================================== */
+#term-ov{
+  position:fixed;inset:0;z-index:99900;
+  background:rgba(0,0,0,.9);backdrop-filter:blur(12px);
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;
+  transition:opacity .3s;padding:1rem;
+}
+#term-ov.show{opacity:1;pointer-events:all;}
+#term-box{
+  width:min(700px,100%);
+  background:#0A0E1A;
+  border:1px solid rgba(var(--c1r),.25);
+  border-radius:16px;overflow:hidden;
+  box-shadow:0 0 60px rgba(var(--c1r),.15),0 40px 80px rgba(0,0,0,.6);
+  transform:scale(.92) translateY(20px);
+  transition:transform .4s cubic-bezier(.4,0,.2,1);
+}
+#term-ov.show #term-box{transform:none;}
+.term-bar{
+  display:flex;align-items:center;gap:8px;
+  background:#131825;padding:.75rem 1rem;
+  border-bottom:1px solid rgba(var(--c1r),.1);
+}
+.t-dot{width:10px;height:10px;border-radius:50%;}
+.term-body{padding:1.5rem;min-height:300px;max-height:60vh;overflow-y:auto;}
+#term-out{font-family:'Space Mono',monospace;font-size:.75rem;line-height:2;color:#94A3B8;}
+.term-line{opacity:0;transform:translateX(-8px);animation:tl-in .2s ease forwards;}
+@keyframes tl-in{to{opacity:1;transform:none;}}
+.t-green{color:#22c55e;}.t-cyan{color:var(--c1);}.t-purple{color:var(--c2);}
+.t-orange{color:var(--c3);}.t-white{color:#F0F9FF;}
+.t-dim{color:#334155;}
+
+/* Project detail panel (inside terminal modal) */
+#proj-detail{
+  display:none;
+  border-top:1px solid rgba(var(--c1r),.1);
+  padding:1.25rem 1.5rem;
+  background:#0D1321;
+}
+#proj-detail.show{display:block;}
+
+/* =====================================================
+   VIDEO SECTION
+===================================================== */
+.vid-wrap{
+  position:relative;border-radius:20px;overflow:hidden;
+  aspect-ratio:16/9;
+  background:#080F1E;
+  border:1px solid rgba(var(--c1r),.12);
+  cursor:none;
+}
+.vid-thumb{width:100%;height:100%;object-fit:cover;filter:brightness(.6);}
+.vid-play{
+  position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;
+  flex-direction:column;gap:16px;
+}
+.play-btn{
+  width:80px;height:80px;border-radius:50%;
+  background:rgba(var(--c1r),.15);
+  border:2px solid rgba(var(--c1r),.4);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--c1);
+  transition:all .3s;
+  animation:pulse-play 2.5s ease-in-out infinite;
+}
+.play-btn:hover{background:var(--c1);color:#000;transform:scale(1.08);}
+@keyframes pulse-play{
+  0%,100%{box-shadow:0 0 0 0 rgba(var(--c1r),.4);}
+  50%{box-shadow:0 0 0 20px rgba(var(--c1r),0);}
+}
+.vid-overlay-txt{
+  text-align:center;
+  font-family:'Space Mono',monospace;font-size:.65rem;
+  color:rgba(255,255,255,.5);letter-spacing:.2em;text-transform:uppercase;
+}
+
+/* =====================================================
+   PROCESS
+===================================================== */
+.proc-grid{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center;}
+.proc-steps{display:flex;flex-direction:column;gap:1.5rem;}
+.proc-step{
+  display:flex;gap:1.25rem;position:relative;
+  padding:1.25rem;border-radius:12px;border:1px solid transparent;
+  transition:all .3s;
+}
+.proc-step:hover{border-color:rgba(var(--c1r),.2);background:rgba(var(--c1r),.03);}
+.proc-step:not(:last-child)::after{
+  content:'';position:absolute;left:34px;bottom:-28px;
+  width:2px;height:28px;
+  background:linear-gradient(to bottom,var(--c1),transparent);
+  opacity:.2;
+}
+.pn{
+  width:44px;height:44px;flex-shrink:0;border-radius:10px;
+  background:rgba(var(--c1r),.1);border:1px solid rgba(var(--c1r),.2);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Space Mono',monospace;font-size:.85rem;font-weight:700;
+  color:var(--c1);box-shadow:0 0 16px rgba(var(--c1r),.08);
+}
+
+/* =====================================================
+   TECH MARQUEE
+===================================================== */
+.mq-wrap{overflow:hidden;position:relative;}
+.mq-wrap::before,.mq-wrap::after{
+  content:'';position:absolute;top:0;bottom:0;width:80px;z-index:2;pointer-events:none;
+}
+.mq-wrap::before{left:0;background:linear-gradient(90deg,var(--bg2),transparent);}
+.mq-wrap::after{right:0;background:linear-gradient(-90deg,var(--bg2),transparent);}
+.mq-track{
+  display:flex;gap:14px;width:max-content;
+  animation:mq 28s linear infinite;
+}
+.mq-track:hover{animation-play-state:paused;}
+@keyframes mq{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}
+.mq-pill{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:10px 20px;background:var(--card2);
+  border:1px solid var(--line);border-radius:999px;
+  font-size:.82rem;font-weight:600;color:var(--t2);
+  white-space:nowrap;transition:all .3s;
+}
+.mq-pill:hover{border-color:var(--c1);color:var(--c1);box-shadow:0 0 20px rgba(var(--c1r),.15);}
+
+/* =====================================================
+   STATS
+===================================================== */
+.stats-bg{
+  background:linear-gradient(135deg,var(--c2) 0%,rgba(var(--c1r),.9) 100%);
+  position:relative;overflow:hidden;
+}
+.stats-bg::before{
+  content:'';position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px);
+  background-size:40px 40px;
+}
+.stat-num{
+  font-family:'Syne',sans-serif;font-size:clamp(2.5rem,5vw,4.5rem);
+  font-weight:800;color:#fff;line-height:1;
+  text-shadow:0 0 30px rgba(255,255,255,.3);
+}
+
+/* =====================================================
+   TESTIMONIALS
+===================================================== */
+.test-card{
+  background:var(--card);border:1px solid var(--line);
+  border-left:3px solid var(--c1);border-radius:16px;
+  padding:2rem;position:relative;transition:all .3s;
+}
+.test-card::before{
+  content:'"';position:absolute;top:.5rem;right:1.5rem;
+  font-family:'Syne',sans-serif;font-size:5rem;line-height:1;
+  color:var(--c1);opacity:.08;
+}
+.test-card:hover{transform:translateY(-5px);box-shadow:0 20px 50px rgba(0,0,0,.25);}
+.st-row{display:flex;gap:3px;margin-bottom:14px;}
+
+/* =====================================================
+   PRICING
+===================================================== */
+.price-card{
+  background:var(--card);border:1px solid var(--line);
+  border-radius:20px;padding:2.5rem 2rem;
+  position:relative;transition:all .4s;
+}
+.price-card:hover{transform:translateY(-8px);}
+.price-card.hot{
+  border-color:rgba(var(--c1r),.4);
+  box-shadow:0 0 0 1px rgba(var(--c1r),.12),0 30px 70px rgba(0,0,0,.3),0 0 50px rgba(var(--c1r),.08);
+}
+.price-card.hot::before{
+  content:'MOST POPULAR';
+  position:absolute;top:-14px;left:50%;transform:translateX(-50%);
+  background:linear-gradient(135deg,var(--c1),var(--c2));
+  color:#fff;font-family:'Space Mono',monospace;
+  font-size:.58rem;font-weight:700;letter-spacing:.2em;
+  padding:4px 16px;border-radius:999px;white-space:nowrap;
+}
+.price-amt{font-family:'Syne',sans-serif;font-size:3rem;font-weight:800;letter-spacing:-.04em;}
+.pc-check{display:flex;align-items:center;gap:10px;font-size:.875rem;color:var(--t2);padding:5px 0;}
+
+/* =====================================================
+   FAQ
+===================================================== */
+.faq-it{
+  border:1px solid var(--line);border-radius:12px;
+  overflow:hidden;margin-bottom:10px;transition:border-color .3s;
+}
+.faq-it.on{border-color:rgba(var(--c1r),.3);}
+.faq-q{
+  padding:1.25rem 1.5rem;display:flex;justify-content:space-between;align-items:center;
+  cursor:none;font-weight:600;font-size:.9rem;user-select:none;
+}
+.faq-ico{
+  width:22px;height:22px;border:1.5px solid var(--t3);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  transition:all .3s;color:var(--t3);
+}
+.faq-it.on .faq-ico{background:var(--c1);border-color:var(--c1);transform:rotate(45deg);color:#000;}
+.faq-a{
+  max-height:0;overflow:hidden;
+  transition:max-height .4s cubic-bezier(.4,0,.2,1),padding .3s;
+  padding:0 1.5rem;font-size:.875rem;color:var(--t2);line-height:1.7;
+}
+.faq-it.on .faq-a{max-height:200px;padding:0 1.5rem 1.25rem;}
+
+/* =====================================================
+   CONTACT
+===================================================== */
+.f-inp{
+  width:100%;background:var(--card2);
+  border:1.5px solid var(--line);border-radius:10px;
+  padding:13px 16px;font-family:'Space Grotesk',sans-serif;
+  font-size:.9rem;color:var(--t1);outline:none;
+  transition:border-color .25s,box-shadow .25s;
+}
+.f-inp:focus{
+  border-color:var(--c1);
+  box-shadow:0 0 0 4px rgba(var(--c1r),.1),0 0 20px rgba(var(--c1r),.06);
+  background:var(--card);
+}
+.f-inp::placeholder{color:var(--t3);}
+.f-lbl{
+  display:block;font-family:'Space Mono',monospace;
+  font-size:.58rem;letter-spacing:.2em;color:var(--t3);margin-bottom:6px;
+}
+
+/* =====================================================
+   SCROLL PHONE
+===================================================== */
+#scroll-ph{
+  position:fixed;right:-140px;
+  top:50%;transform:translateY(-50%);
+  z-index:170;pointer-events:none;
+  transition:right .8s cubic-bezier(.4,0,.2,1);
+}
+#scroll-ph.in{right:20px;}
+.ph-outer{
+  width:72px;height:130px;
+  background:linear-gradient(160deg,var(--card2),var(--card));
+  border:2px solid rgba(var(--c1r),.35);border-radius:18px;
+  position:relative;
+  box-shadow:0 0 28px rgba(var(--c1r),.25),inset 0 0 20px rgba(var(--c1r),.04);
+}
+.ph-scr{
+  position:absolute;top:9px;left:5px;right:5px;bottom:9px;
+  background:var(--bg);border-radius:12px;overflow:hidden;
+  display:flex;align-items:center;justify-content:center;
+}
+.ph-scr-txt{
+  font-family:'Space Mono',monospace;font-size:.32rem;
+  color:var(--c1);opacity:.7;text-align:center;line-height:1.6;
+}
+.ph-notch{
+  position:absolute;top:4px;left:50%;transform:translateX(-50%);
+  width:20px;height:4px;background:rgba(var(--c1r),.3);border-radius:999px;
+}
+.ph-glow{
+  position:absolute;bottom:-16px;left:50%;transform:translateX(-50%);
+  width:50px;height:6px;
+  background:radial-gradient(ellipse,rgba(var(--c1r),.4),transparent);
+  filter:blur(3px);
+}
+@keyframes ph-drop{
+  0%{transform:translateY(0) rotate(0deg);}
+  100%{transform:translateY(250px) rotate(25deg) scale(.4);}
+}
+#scroll-ph.drop .ph-outer{animation:ph-drop .7s cubic-bezier(.4,0,.8,1) forwards;}
+
+/* =====================================================
+   THEME PANEL
+===================================================== */
+#th-btn{
+  position:fixed;right:0;top:50%;transform:translateY(-50%);z-index:299;
+  width:40px;height:42px;
+  background:var(--card);border:1px solid var(--line);border-right:none;
+  border-radius:10px 0 0 10px;display:flex;align-items:center;justify-content:center;
+  color:var(--t2);cursor:none;transition:all .25s;
+}
+#th-btn:hover{color:var(--c1);border-color:rgba(var(--c1r),.3);}
+#th-panel{
+  position:fixed;right:-295px;top:50%;transform:translateY(-50%);
+  z-index:300;width:275px;
+  background:var(--card);border:1px solid var(--line);border-right:none;
+  border-radius:14px 0 0 14px;overflow:hidden;
+  box-shadow:-10px 0 40px rgba(0,0,0,.3);
+  transition:right .4s cubic-bezier(.4,0,.2,1);
+  display:flex;flex-direction:column;max-height:80vh;
+}
+#th-panel.on{right:0;}
+.th-head{
+  background:linear-gradient(135deg,var(--c2),var(--c1));
+  padding:14px 18px;display:flex;align-items:center;justify-content:space-between;
+  flex-shrink:0;
+}
+.th-body{padding:18px;overflow-y:auto;flex:1;}
+.th-sl{
+  font-family:'Space Mono',monospace;font-size:.58rem;
+  letter-spacing:.25em;color:var(--t3);margin-bottom:10px;
+  margin-top:14px;text-transform:uppercase;
+}
+.th-sl:first-child{margin-top:0;}
+.swatch{
+  width:32px;height:32px;border-radius:50%;border:3px solid transparent;
+  cursor:none;transition:all .2s;flex-shrink:0;
+}
+.swatch:hover,.swatch.on{border-color:var(--t1);transform:scale(1.15);}
+.c-row{
+  display:flex;align-items:center;gap:10px;padding:8px 10px;
+  background:var(--card2);border:1px solid var(--line);border-radius:8px;margin-bottom:8px;
+}
+.c-row input[type="color"]{
+  width:32px;height:32px;border:none;background:none;padding:0;cursor:none;border-radius:6px;
+}
+.tgl{
+  width:46px;height:24px;background:var(--card2);border:1.5px solid var(--line);
+  border-radius:999px;position:relative;cursor:none;transition:background .3s,border-color .3s;flex-shrink:0;
+}
+.tgl.on{background:var(--c1);border-color:var(--c1);}
+.tgl-k{
+  position:absolute;top:2px;left:2px;
+  width:16px;height:16px;border-radius:50%;background:#fff;
+  transition:left .3s cubic-bezier(.4,0,.2,1);
+  box-shadow:0 2px 4px rgba(0,0,0,.25);
+}
+.tgl.on .tgl-k{left:22px;}
+
+/* =====================================================
+   FLOATING BUTTONS
+===================================================== */
+#floats{
+  position:fixed;bottom:24px;right:20px;z-index:180;
+  display:flex;flex-direction:column;gap:10px;align-items:flex-end;
+}
+.fl-btn{
+  width:46px;height:46px;border-radius:50%;border:none;
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;text-decoration:none;cursor:none;
+  box-shadow:0 4px 18px rgba(0,0,0,.3);
+  transition:all .3s cubic-bezier(.4,0,.2,1);
+}
+.fl-btn:hover{transform:scale(1.14);}
+#fl-top{
+  background:var(--card2);border:1.5px solid var(--line);color:var(--t2);
+  opacity:0;pointer-events:none;transform:translateY(16px);
+  transition:opacity .3s,transform .3s;
+}
+#fl-top.on{opacity:1;pointer-events:all;transform:none;}
+#fl-top:hover{border-color:var(--c1);color:var(--c1);}
+
+/* =====================================================
+   FOOTER
+===================================================== */
+footer{
+  background:var(--card);border-top:1px solid var(--line);
+  position:relative;
+}
+footer::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--c1),var(--c2),transparent);
+}
+.ftr-h{
+  font-family:'Space Mono',monospace;font-size:.6rem;
+  letter-spacing:.2em;color:var(--t3);text-transform:uppercase;margin-bottom:14px;
+}
+
+/* =====================================================
+   HOURS
+===================================================== */
+.hr-row{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:5px 0;border-bottom:1px solid var(--line);font-size:.78rem;
+}
+.hr-row:last-child{border:none;}
+.hr-row.today{font-weight:700;color:var(--t1);}
+
+/* =====================================================
+   OFFER MODAL
+===================================================== */
+#offer-modal{
+  position:fixed;inset:0;z-index:99000;
+  background:rgba(0,0,0,.75);backdrop-filter:blur(10px);
+  display:flex;align-items:center;justify-content:center;padding:1rem;
+  opacity:0;pointer-events:none;transition:opacity .4s;
+}
+#offer-modal.on{opacity:1;pointer-events:all;}
+#om-box{
+  max-width:440px;width:100%;background:var(--card);
+  border:1px solid rgba(var(--c1r),.2);border-top:3px solid var(--c1);
+  border-radius:20px;padding:2.5rem;position:relative;
+  transform:scale(.92) translateY(20px);
+  transition:transform .4s cubic-bezier(.4,0,.2,1);
+  box-shadow:0 0 60px rgba(var(--c1r),.15),0 40px 80px rgba(0,0,0,.6);
+}
+#offer-modal.on #om-box{transform:none;}
+
+/* =====================================================
+   ANIMATIONS + REVEALS
+===================================================== */
+.rv{opacity:0;transform:translateY(24px);transition:opacity .65s ease,transform .65s ease;}
+.rv.ok{opacity:1;transform:none;}
+.rl{opacity:0;transform:translateX(-24px);transition:opacity .65s ease,transform .65s ease;}
+.rl.ok{opacity:1;transform:none;}
+.rr{opacity:0;transform:translateX(24px);transition:opacity .65s ease,transform .65s ease;}
+.rr.ok{opacity:1;transform:none;}
+.d1{transition-delay:.1s;}.d2{transition-delay:.2s;}.d3{transition-delay:.3s;}
+.d4{transition-delay:.4s;}.d5{transition-delay:.5s;}
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+@media(max-width:1024px){
+  .hero-wrap{grid-template-columns:1fr;}
+  .hero-device{display:none;}
+  .proc-grid{grid-template-columns:1fr;}
+  .nav-links,.nav-cta{display:none!important;}
+  .ham{display:flex!important;}
+}
+@media(min-width:1025px){.ham{display:none!important;}}
+@media(max-width:640px){
+  .sec{padding:4rem 0;}
+  #scroll-ph{display:none;}
+  #th-panel{width:260px;right:-270px;}
+  #th-panel.on{right:0;}
+  .ftr-grid{grid-template-columns:1fr 1fr!important;}
+}
+</style>
+</head>
+<body>
+
+<!-- CURSOR -->
+<div id="cur-d"></div>
+<div id="cur-r"></div>
+
+<!-- LOADER -->
+<div id="loader">
+  <canvas id="ldr-canvas"></canvas>
+  <div id="ldr-logo">SoftTechz 🌐</div>
+  <div id="ldr-sub">Initializing Digital Studio...</div>
+  <div id="ldr-bar"><div id="ldr-fill"></div></div>
+</div>
+
+<!-- TERMINAL OVERLAY -->
+<div id="term-ov">
+  <div id="term-box">
+    <div class="term-bar">
+      <div class="t-dot" style="background:#FF5F57;"></div>
+      <div class="t-dot" style="background:#FEBC2E;"></div>
+      <div class="t-dot" style="background:#28C840;"></div>
+      <span style="margin-left:8px;font-family:'Space Mono',monospace;font-size:.65rem;color:#475569;">softtechz@studio ~ analyzing project</span>
+      <button onclick="closeTerm()" style="margin-left:auto;background:none;border:none;color:#475569;cursor:none;font-size:.9rem;transition:color .2s;" onmouseover="this.style.color='#94A3B8'" onmouseout="this.style.color='#475569'">✕</button>
+    </div>
+    <div class="term-body">
+      <div id="term-out"></div>
+    </div>
+    <div id="proj-detail">
+      <div id="pd-inner"></div>
+    </div>
+  </div>
+</div>
+
+<!-- OFFER BANNER -->
+<div id="offer-bar">
+  <div class="bar-badge">LAUNCH OFFER</div>
+  <span>🚀 New Client Special — <strong>30% OFF</strong> First Project · Code: <strong>LAUNCH30</strong></span>
+  <button onclick="this.parentElement.remove()" style="position:absolute;right:12px;background:none;border:none;color:rgba(255,255,255,.6);font-size:1.1rem;cursor:none;transition:color .2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,.6)'">×</button>
+</div>
+
+<!-- NAVBAR -->
+<nav id="nav">
+  <div class="nav-in">
+    <a href="#home" class="logo">
+      <div class="logo-box">
+        <svg width="16" height="16" fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+      </div>
+      <span class="logo-txt">SoftTechz</span>
+    </a>
+
+    <div class="nav-links">
+      <a href="#services" class="nl">Services</a>
+      <a href="#projects" class="nl">Projects</a>
+      <a href="#video" class="nl">Work</a>
+      <a href="#process" class="nl">Process</a>
+      <a href="#pricing" class="nl">Pricing</a>
+      <a href="#contact" class="nl">Contact</a>
+    </div>
+
+    <div class="nav-r">
+      <span id="status-pill">
+        <span class="sdot"></span><span id="st-txt">OPEN</span>
+      </span>
+      <button class="icon-btn" onclick="toggleMode()" id="mode-btn" title="Toggle theme">
+        <svg id="sun-ic" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="display:none"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+        <svg id="moon-ic" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+      </button>
+      <a href="#contact" class="btn-pill btn-grad nav-cta" style="font-size:.78rem;padding:8px 18px;">Let's Talk 🚀</a>
+      <button class="icon-btn ham" onclick="toggleMob()" style="flex-direction:column;gap:4px;padding:8px;">
+        <span style="display:block;width:16px;height:1.5px;background:currentColor;transition:all .3s;"></span>
+        <span style="display:block;width:16px;height:1.5px;background:currentColor;transition:all .3s;"></span>
+        <span style="display:block;width:16px;height:1.5px;background:currentColor;transition:all .3s;"></span>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- MOBILE NAV -->
+<div id="mob-nav">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem;">
+    <span class="logo-txt" style="font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:800;">SoftTechz 🌐</span>
+    <button onclick="toggleMob()" class="icon-btn">✕</button>
+  </div>
+  <a href="#services" onclick="toggleMob()" class="mob-link">Services</a>
+  <a href="#projects" onclick="toggleMob()" class="mob-link">Projects</a>
+  <a href="#video" onclick="toggleMob()" class="mob-link">Our Work</a>
+  <a href="#process" onclick="toggleMob()" class="mob-link">Process</a>
+  <a href="#pricing" onclick="toggleMob()" class="mob-link">Pricing</a>
+  <a href="#contact" onclick="toggleMob()" class="mob-link">Contact</a>
+  <a href="#contact" onclick="toggleMob()" class="btn-pill btn-grad" style="margin-top:auto;justify-content:center;text-align:center;text-decoration:none;">Let's Build Something 🚀</a>
+</div>
+
+<!-- ====================================================
+  HERO
+==================================================== -->
+<section id="home" style="position:relative;min-height:100svh;display:flex;align-items:center;overflow:hidden;">
+  <canvas id="hero-cv" style="position:absolute;inset:0;z-index:0;"></canvas>
+  <div class="h-grid" style="z-index:1;"></div>
+  <div class="h-radial" style="z-index:1;"></div>
+
+  <!-- Floating code snippets -->
+  <div class="f-code" style="bottom:25%;left:6%;animation-duration:16s;animation-delay:2s;">const magic = () =&gt; future();</div>
+  <div class="f-code" style="bottom:35%;right:5%;animation-duration:20s;animation-delay:4s;">npm run build-dreams</div>
+  <div class="f-code" style="bottom:18%;left:22%;animation-duration:13s;animation-delay:7s;">&lt;SoftTechz impact="∞"/&gt;</div>
+  <div class="f-code" style="bottom:45%;right:12%;animation-duration:18s;animation-delay:1s;">await ship("your-vision")</div>
+
+  <div class="container" style="position:relative;z-index:2;padding-top:3rem;padding-bottom:3rem;">
+    <div class="hero-wrap">
+      <!-- LEFT -->
+      <div class="rv">
+        <div class="hero-tag"><span class="htag-dot"></span>AVAILABLE FOR PROJECTS · 2025</div>
+        <h1 class="hero-h">
+          We Build<br/>
+          <span class="grad-txt">Digital Experiences</span><br/>
+          <span style="color:var(--t2);font-weight:700;font-size:65%;">That Break the Internet.</span>
+        </h1>
+        <div id="tw-text"><span id="tw-span"></span><span id="tw-cur"></span></div>
+        <div class="hero-btns">
+          <a href="#projects" class="btn-pill btn-grad">View Our Work →</a>
+          <a href="#contact" class="btn-pill btn-ghost">Start a Project</a>
+        </div>
+        <div class="hero-stats">
+          <div><div class="hs-num" id="hero-c1">12+</div><div class="hs-lbl">PROJECTS LIVE</div></div>
+          <div><div class="hs-num" id="hero-c2">8+</div><div class="hs-lbl">HAPPY CLIENTS</div></div>
+          <div><div class="hs-num">∞</div><div class="hs-lbl">DEDICATION</div></div>
+        </div>
+      </div>
+
+      <!-- RIGHT — Code Device -->
+      <div class="hero-device rr">
+        <div class="device-laptop">
+          <div class="device-screen">
+            <div class="device-code" id="dev-code">
+<span style="color:#475569;">// SoftTechz Studio</span>
+<span style="color:var(--c2);">const</span> <span style="color:var(--c1);">client</span> = <span style="color:var(--c3);">await</span> find();
+
+<span style="color:var(--c2);">function</span> <span style="color:var(--c1);">buildDream</span>(<span style="color:var(--c3);">idea</span>) {
+  <span style="color:var(--c2);">const</span> design = ✨ craft(idea);
+  <span style="color:var(--c2);">const</span> code = 💻 ship(design);
+  <span style="color:var(--c2);">const</span> result = 🚀 launch(code);
+  <span style="color:var(--c2);">return</span> result.<span style="color:var(--c1);">wow</span>();
+}
+
+<span style="color:#22c55e;">// Status: Ready to build yours!</span>
+buildDream(<span style="color:var(--c3);">"your-vision"</span>);
+            </div>
+          </div>
+          <div class="device-base"></div>
+          <div class="device-float df1" style="color:var(--c1);">
+            <span style="color:#22c55e;">✓</span> Build Complete · 2.1s
+          </div>
+          <div class="device-float df2" style="color:var(--t2);">
+            🚀 <span style="color:var(--c1);">softtechz.in</span> · Live
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scroll indicator -->
+  <div style="position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;z-index:2;animation:float-a 2s ease-in-out infinite;">
+    <span class="mono" style="font-size:.55rem;letter-spacing:.3em;color:var(--t3);">SCROLL</span>
+    <div style="width:1.5px;height:36px;background:linear-gradient(to bottom,var(--c1),transparent);"></div>
+  </div>
+</section>
+
+<hr class="glow-line"/>
+
+<!-- ====================================================
+  SERVICES
+==================================================== -->
+<section id="services" class="sec">
+  <div class="container">
+    <div class="rv" style="text-align:center;margin-bottom:3.5rem;">
+      <div class="sec-tag" style="justify-content:center;">What We Do</div>
+      <h2 class="sec-h">Services Built for <span class="grad-txt">Scale & Impact</span></h2>
+      <p style="color:var(--t2);margin-top:1rem;max-width:480px;margin-left:auto;margin-right:auto;line-height:1.7;font-size:.9rem;">From idea to live product — every pixel, every line of code, every animation crafted with intent.</p>
+    </div>
+    <div class="svc-grid">
+
+      <div class="svc-card rv d1">
+        <div class="svc-ico" style="background:rgba(0,212,255,.1);">
+          <svg width="22" height="22" fill="none" stroke="var(--c1)" stroke-width="2" viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+        </div>
+        <h3 style="font-weight:700;margin-bottom:.6rem;">Web Development</h3>
+        <p style="color:var(--t2);font-size:.875rem;line-height:1.7;margin-bottom:1rem;">Blazing-fast web apps using React, Next.js — optimized for speed and conversion.</p>
+        <div><span class="t-tag">React</span><span class="t-tag">Next.js</span><span class="t-tag">Node.js</span></div>
+      </div>
+
+      <div class="svc-card rv d2">
+        <div class="svc-ico" style="background:rgba(124,58,237,.12);">
+          <svg width="22" height="22" fill="none" stroke="var(--c2)" stroke-width="2" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+        </div>
+        <h3 style="font-weight:700;margin-bottom:.6rem;">App Development</h3>
+        <p style="color:var(--t2);font-size:.875rem;line-height:1.7;margin-bottom:1rem;">Cross-platform iOS & Android apps. Native feel, stunning UI, real-world impact.</p>
+        <div><span class="t-tag" style="color:var(--c2);border-color:rgba(124,58,237,.3);background:rgba(124,58,237,.1);">Flutter</span><span class="t-tag" style="color:var(--c2);border-color:rgba(124,58,237,.3);background:rgba(124,58,237,.1);">React Native</span></div>
+      </div>
+
+      <div class="svc-card rv d3">
+        <div class="svc-ico" style="background:rgba(255,107,43,.1);">
+          <svg width="22" height="22" fill="none" stroke="var(--c3)" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="4.93" y1="4.93" x2="9.17" y2="9.17"/><line x1="14.83" y1="14.83" x2="19.07" y2="19.07"/><line x1="14.83" y1="9.17" x2="19.07" y2="4.93"/><line x1="4.93" y1="19.07" x2="9.17" y2="14.83"/></svg>
+        </div>
+        <h3 style="font-weight:700;margin-bottom:.6rem;">UI / UX Design</h3>
+        <p style="color:var(--t2);font-size:.875rem;line-height:1.7;margin-bottom:1rem;">Research-backed, pixel-perfect interfaces that convert visitors to customers.</p>
+        <div><span class="t-tag" style="color:var(--c3);border-color:rgba(255,107,43,.3);background:rgba(255,107,43,.1);">Figma</span><span class="t-tag" style="color:var(--c3);border-color:rgba(255,107,43,.3);background:rgba(255,107,43,.1);">Prototyping</span></div>
+      </div>
+
+      <div class="svc-card rv d4">
+        <div class="svc-ico" style="background:rgba(0,212,255,.07);">
+          <svg width="22" height="22" fill="none" stroke="var(--c1)" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2a10 10 0 100 20A10 10 0 0012 2z"/><path d="M12 8v4l3 3"/></svg>
+        </div>
+        <h3 style="font-weight:700;margin-bottom:.6rem;">AI Integration</h3>
+        <p style="color:var(--t2);font-size:.875rem;line-height:1.7;margin-bottom:1rem;">GPT-powered chatbots, automation, recommendation engines built into your product.</p>
+        <div><span class="t-tag">OpenAI</span><span class="t-tag">LangChain</span></div>
+      </div>
+
+      <div class="svc-card rv d5">
+        <div class="svc-ico" style="background:rgba(124,58,237,.1);">
+          <svg width="22" height="22" fill="none" stroke="var(--c2)" stroke-width="2" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>
+        </div>
+        <h3 style="font-weight:700;margin-bottom:.6rem;">E-Commerce</h3>
+        <p style="color:var(--t2);font-size:.875rem;line-height:1.7;margin-bottom:1rem;">Custom stores built for revenue. Product listings, checkout, and admin dashboards.</p>
+        <div><span class="t-tag" style="color:var(--c2);border-color:rgba(124,58,237,.3);background:rgba(124,58,237,.1);">Shopify</span><span class="t-tag" style="color:var(--c2);border-color:rgba(124,58,237,.3);background:rgba(124,58,237,.1);">WooCommerce</span></div>
+      </div>
+
+      <div class="svc-card rv d1">
+        <div class="svc-ico" style="background:rgba(255,107,43,.08);">
+          <svg width="22" height="22" fill="none" stroke="var(--c3)" stroke-width="2" viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+        </div>
+        <h3 style="font-weight:700;margin-bottom:.6rem;">SEO & Growth</h3>
+        <p style="color:var(--t2);font-size:.875rem;line-height:1.7;margin-bottom:1rem;">Technical SEO + content strategy that compounds. Rank on Google, drive organic traffic.</p>
+        <div><span class="t-tag" style="color:var(--c3);border-color:rgba(255,107,43,.3);background:rgba(255,107,43,.1);">SEO</span><span class="t-tag" style="color:var(--c3);border-color:rgba(255,107,43,.3);background:rgba(255,107,43,.1);">Analytics</span></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<hr class="glow-line"/>
+
+<!-- ====================================================
+  PROJECTS
+==================================================== -->
+<section id="projects" class="sec sec-alt">
+  <div class="container">
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:1rem;margin-bottom:3rem;">
+      <div class="rv">
+        <div class="sec-tag">Our Work</div>
+        <h2 class="sec-h">Projects That <span class="grad-txt">Speak</span></h2>
+      </div>
+      <p class="rv d2" style="color:var(--t2);max-width:300px;font-size:.85rem;line-height:1.6;">
+        Click any project → watch the <strong>terminal analysis</strong> ⚡
+      </p>
+    </div>
+
+    <div class="proj-grid">
+
+      <div class="proj-card rv d1" onclick="runTerminal(0)">
+        <img class="proj-img" src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&q=80" alt="ShopNova E-Commerce"/>
+        <div class="proj-ov">
+          <div class="p-num">01</div>
+          <div style="font-family:'Space Mono',monospace;font-size:.6rem;color:var(--c1);letter-spacing:.18em;margin-bottom:5px;">E-COMMERCE</div>
+          <div style="font-size:1.1rem;font-weight:700;color:#fff;margin-bottom:8px;">ShopNova Platform</div>
+          <div class="p-stacks"><span class="t-tag">Next.js</span><span class="t-tag">Stripe</span><span class="t-tag">MongoDB</span></div>
+        </div>
+        <div class="p-launch">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+        </div>
+      </div>
+
+      <div class="proj-card rv d2" onclick="runTerminal(1)">
+        <img class="proj-img" src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=800&q=80" alt="MediTrack Healthcare"/>
+        <div class="proj-ov">
+          <div class="p-num">02</div>
+          <div style="font-family:'Space Mono',monospace;font-size:.6rem;color:var(--c2);letter-spacing:.18em;margin-bottom:5px;">HEALTHCARE</div>
+          <div style="font-size:1.1rem;font-weight:700;color:#fff;margin-bottom:8px;">MediTrack App</div>
+          <div class="p-stacks"><span class="t-tag" style="color:var(--c2);border-color:rgba(124,58,237,.3);background:rgba(124,58,237,.1);">Flutter</span><span class="t-tag" style="color:var(--c2);border-color:rgba(124,58,237,.3);background:rgba(124,58,237,.1);">Firebase</span></div>
+        </div>
+        <div class="p-launch" style="color:var(--c2);border-color:rgba(124,58,237,.3);">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+        </div>
+      </div>
+
+      <div class="proj-card rv d3" onclick="runTerminal(2)">
+        <img class="proj-img" src="https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=800&q=80" alt="WealthOS FinTech"/>
+        <div class="proj-ov">
+          <div class="p-num">03</div>
+          <div style="font-family:'Space Mono',monospace;font-size:.6rem;color:var(--c3);letter-spacing:.18em;margin-bottom:5px;">FINTECH</div>
+          <div style="font-size:1.1rem;font-weight:700;color:#fff;margin-bottom:8px;">WealthOS Dashboard</div>
+          <div class="p-stacks"><span class="t-tag" style="color:var(--c3);border-color:rgba(255,107,43,.3);background:rgba(255,107,43,.1);">React</span><span class="t-tag" style="color:var(--c3);border-color:rgba(255,107,43,.3);background:rgba(255,107,43,.1);">D3.js</span></div>
+        </div>
+        <div class="p-launch" style="color:var(--c3);border-color:rgba(255,107,43,.3);">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+        </div>
+      </div>
+
+      <div class="proj-card rv d4" onclick="runTerminal(3)">
+        <img class="proj-img" src="https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=800&q=80" alt="NeuralChat AI"/>
+        <div class="proj-ov">
+          <div class="p-num">04</div>
+          <div style="font-family:'Space Mono',monospace;font-size:.6rem;color:var(--c1);letter-spacing:.18em;margin-bottom:5px;">AI PRODUCT</div>
+          <div style="font-size:1.1rem;font-weight:700;color:#fff;margin-bottom:8px;">NeuralChat AI</div>
+          <div class="p-stacks"><span class="t-tag">OpenAI</span><span class="t-tag">Python</span><span class="t-tag">FastAPI</span></div>
+        </div>
+        <div class="p-launch">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+        </div>
+      </div>
+
+      <div class="proj-card rv d5" onclick="runTerminal(4)">
+        <img class="proj-img" src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&q=80" alt="PropFind Real Estate"/>
+        <div class="proj-ov">
+          <div class="p-num">05</div>
+          <div style="font-family:'Space Mono',monospace;font-size:.6rem;color:var(--c2);letter-spacing:.18em;margin-bottom:5px;">REAL ESTATE</div>
+          <div style="font-size:1.1rem;font-weight:700;color:#fff;margin-bottom:8px;">PropFind Portal</div>
+          <div class="p-stacks"><span class="t-tag" style="color:var(--c2);border-color:rgba(124,58,237,.3);background:rgba(124,58,237,.1);">Vue.js</span><span class="t-tag" style="color:var(--c2);border-color:rgba(124,58,237,.3);background:rgba(124,58,237,.1);">Laravel</span></div>
+        </div>
+        <div class="p-launch" style="color:var(--c2);border-color:rgba(124,58,237,.3);">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+        </div>
+      </div>
+
+      <div class="proj-card rv d1" onclick="runTerminal(5)">
+        <img class="proj-img" src="https://images.unsplash.com/photo-1501504905252-473c47e087f8?w=800&q=80" alt="LearnArc EduTech"/>
+        <div class="proj-ov">
+          <div class="p-num">06</div>
+          <div style="font-family:'Space Mono',monospace;font-size:.6rem;color:var(--c3);letter-spacing:.18em;margin-bottom:5px;">EDUTECH</div>
+          <div style="font-size:1.1rem;font-weight:700;color:#fff;margin-bottom:8px;">LearnArc LMS</div>
+          <div class="p-stacks"><span class="t-tag" style="color:var(--c3);border-color:rgba(255,107,43,.3);background:rgba(255,107,43,.1);">Next.js</span><span class="t-tag" style="color:var(--c3);border-color:rgba(255,107,43,.3);background:rgba(255,107,43,.1);">PostgreSQL</span></div>
+        </div>
+        <div class="p-launch" style="color:var(--c3);border-color:rgba(255,107,43,.3);">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<hr class="glow-line"/>
+
+<!-- ====================================================
+  VIDEO SECTION
+==================================================== -->
+<section id="video" class="sec">
+  <div class="container">
+    <div class="rv" style="text-align:center;margin-bottom:3rem;">
+      <div class="sec-tag" style="justify-content:center;">See Us Work</div>
+      <h2 class="sec-h">Watch How We <span class="grad-txt">Build</span></h2>
+      <p style="color:var(--t2);margin-top:1rem;font-size:.9rem;">Real time-lapse of our development process — from wireframe to live product.</p>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;" class="responsive-2">
+      <div class="vid-wrap rv d1">
+        <img class="vid-thumb" src="https://images.unsplash.com/photo-1581092160607-ee22731c9f81?w=900&q=80" alt="Dev process"/>
+        <div class="vid-play">
+          <button class="play-btn" onclick="openVideoModal('https://www.youtube.com/embed/dQw4w9WgXcQ')">
+            <svg width="28" height="28" fill="currentColor" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          </button>
+          <div class="vid-overlay-txt">Our Coding Process · 3 min</div>
+        </div>
+      </div>
+      <div class="vid-wrap rv d2">
+        <img class="vid-thumb" src="https://images.unsplash.com/photo-1518770660439-4636190af475?w=900&q=80" alt="UI design process"/>
+        <div class="vid-play">
+          <button class="play-btn" onclick="openVideoModal('https://www.youtube.com/embed/dQw4w9WgXcQ')">
+            <svg width="28" height="28" fill="currentColor" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          </button>
+          <div class="vid-overlay-txt">UI Design Timelapse · 2 min</div>
+        </div>
+      </div>
+    </div>
+    <!-- Video modal -->
+    <div id="vid-modal" style="display:none;position:fixed;inset:0;z-index:99990;background:rgba(0,0,0,.9);backdrop-filter:blur(12px);align-items:center;justify-content:center;padding:1rem;" onclick="this.style.display='none'">
+      <div style="max-width:800px;width:100%;aspect-ratio:16/9;position:relative;" onclick="event.stopPropagation()">
+        <iframe id="vid-frame" width="100%" height="100%" src="" frameborder="0" allowfullscreen style="border-radius:16px;"></iframe>
+        <button onclick="document.getElementById('vid-modal').style.display='none';document.getElementById('vid-frame').src=''" style="position:absolute;top:-40px;right:0;background:none;border:none;color:#fff;font-size:1.5rem;cursor:none;">✕ Close</button>
+      </div>
+    </div>
+  </div>
+</section>
+<style>.responsive-2{grid-template-columns:1fr 1fr;}@media(max-width:640px){.responsive-2{grid-template-columns:1fr;}}</style>
+
+<hr class="glow-line"/>
+
+<!-- ====================================================
+  PROCESS
+==================================================== -->
+<section id="process" class="sec sec-alt">
+  <div class="container">
+    <div class="proc-grid proc-resp">
+      <div class="rl">
+        <div class="sec-tag">How We Work</div>
+        <h2 class="sec-h" style="margin-bottom:1rem;">Our <span class="grad-txt">4-Step</span> Process</h2>
+        <p style="color:var(--t2);line-height:1.8;font-size:.92rem;margin-bottom:1.5rem;">Proven process. Zero surprises. You'll know what's happening at every stage.</p>
+        <!-- Code snippet -->
+        <div style="background:var(--card);border:1px solid var(--line);border-radius:12px;padding:1.25rem;">
+          <div class="mono" style="font-size:.65rem;color:var(--t2);line-height:2.2;">
+            <span style="color:var(--c2);">01</span> discovery()  <span style="color:#22c55e;">✓ Complete</span><br/>
+            <span style="color:var(--c2);">02</span> design()     <span style="color:#22c55e;">✓ Complete</span><br/>
+            <span style="color:var(--c2);">03</span> build()      <span style="color:var(--c1);">⟳ In Progress</span><br/>
+            <span style="color:var(--c2);">04</span> launch()     <span style="color:var(--t3);">· Pending</span>
+          </div>
+        </div>
+      </div>
+      <div class="proc-steps rr">
+        <div class="proc-step">
+          <div class="pn">01</div>
+          <div><h4 style="font-weight:700;margin-bottom:4px;">Discovery Call</h4><p style="color:var(--t2);font-size:.85rem;line-height:1.7;">Free 30-min consultation. We understand your vision, goals, and audience before writing a single line.</p></div>
+        </div>
+        <div class="proc-step">
+          <div class="pn">02</div>
+          <div><h4 style="font-weight:700;margin-bottom:4px;">Design & Prototype</h4><p style="color:var(--t2);font-size:.85rem;line-height:1.7;">Figma designs and interactive prototypes. You approve before we code — no guesswork.</p></div>
+        </div>
+        <div class="proc-step">
+          <div class="pn">03</div>
+          <div><h4 style="font-weight:700;margin-bottom:4px;">Build & Deploy</h4><p style="color:var(--t2);font-size:.85rem;line-height:1.7;">Agile sprints, weekly updates. Best tech for your specific needs. Code quality, always.</p></div>
+        </div>
+        <div class="proc-step">
+          <div class="pn" style="background:linear-gradient(135deg,var(--c1),var(--c2));color:#fff;border:none;">04</div>
+          <div><h4 style="font-weight:700;margin-bottom:4px;">Launch & Support</h4><p style="color:var(--t2);font-size:.85rem;line-height:1.7;">We don't disappear. 3-month free support + ongoing maintenance available.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<style>.proc-resp{grid-template-columns:1fr 1fr;}@media(max-width:768px){.proc-resp{grid-template-columns:1fr;}}</style>
+
+<!-- ====================================================
+  TECH MARQUEE
+==================================================== -->
+<section style="padding:3.5rem 0;background:var(--bg);overflow:hidden;">
+  <div style="text-align:center;margin-bottom:1.75rem;" class="rv">
+    <div class="sec-tag" style="justify-content:center;">Tech Arsenal</div>
+    <h3 style="font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:800;">We Work With The Best Tools</h3>
+  </div>
+  <div class="mq-wrap">
+    <div class="mq-track">
+      <div class="mq-pill">⚛️ React</div><div class="mq-pill">▲ Next.js</div>
+      <div class="mq-pill">💙 Flutter</div><div class="mq-pill">🟢 Node.js</div>
+      <div class="mq-pill">🐍 Python</div><div class="mq-pill">🔥 Firebase</div>
+      <div class="mq-pill">🍃 MongoDB</div><div class="mq-pill">🐘 PostgreSQL</div>
+      <div class="mq-pill">🤖 OpenAI</div><div class="mq-pill">🎨 Figma</div>
+      <div class="mq-pill">☁️ AWS</div><div class="mq-pill">🐳 Docker</div>
+      <div class="mq-pill">💳 Stripe</div><div class="mq-pill">📱 React Native</div>
+      <!-- duplicate for infinite scroll -->
+      <div class="mq-pill">⚛️ React</div><div class="mq-pill">▲ Next.js</div>
+      <div class="mq-pill">💙 Flutter</div><div class="mq-pill">🟢 Node.js</div>
+      <div class="mq-pill">🐍 Python</div><div class="mq-pill">🔥 Firebase</div>
+      <div class="mq-pill">🍃 MongoDB</div><div class="mq-pill">🐘 PostgreSQL</div>
+      <div class="mq-pill">🤖 OpenAI</div><div class="mq-pill">🎨 Figma</div>
+      <div class="mq-pill">☁️ AWS</div><div class="mq-pill">🐳 Docker</div>
+      <div class="mq-pill">💳 Stripe</div><div class="mq-pill">📱 React Native</div>
+    </div>
+  </div>
+</section>
+
+<hr class="glow-line"/>
+
+<!-- ====================================================
+  STATS
+==================================================== -->
+<section id="stats" class="sec stats-bg">
+  <div class="container" style="position:relative;z-index:1;">
+    <div class="rv" style="text-align:center;margin-bottom:3rem;">
+      <div class="sec-tag" style="justify-content:center;color:rgba(255,255,255,.6);"><span style="background:rgba(255,255,255,.3);width:22px;height:1.5px;display:block;"></span>Numbers</div>
+      <h2 class="sec-h" style="color:#fff;">Numbers That <span style="color:rgba(255,255,255,.7);">Speak</span></h2>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:2rem;text-align:center;">
+      <div class="rv d1"><div class="stat-num" id="s1">0</div><div class="mono" style="font-size:.58rem;color:rgba(255,255,255,.5);letter-spacing:.2em;margin-top:8px;">PROJECTS DELIVERED</div></div>
+      <div class="rv d2"><div class="stat-num" id="s2">0</div><div class="mono" style="font-size:.58rem;color:rgba(255,255,255,.5);letter-spacing:.2em;margin-top:8px;">HAPPY CLIENTS</div></div>
+      <div class="rv d3"><div class="stat-num" id="s3">0</div><div class="mono" style="font-size:.58rem;color:rgba(255,255,255,.5);letter-spacing:.2em;margin-top:8px;">COUNTRIES REACHED</div></div>
+      <div class="rv d4"><div class="stat-num" style="color:#fff;">24H</div><div class="mono" style="font-size:.58rem;color:rgba(255,255,255,.5);letter-spacing:.2em;margin-top:8px;">RESPONSE TIME</div></div>
+    </div>
+  </div>
+</section>
+
+<hr class="glow-line"/>
+
+<!-- ====================================================
+  ABOUT
+==================================================== -->
+<section id="about" class="sec">
+  <div class="container">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center;" class="proc-resp">
+      <div class="rl">
+        <div class="sec-tag">Our Story</div>
+        <h2 class="sec-h" style="margin-bottom:1.5rem;">Born from <span class="grad-txt">Code</span>, Driven by Vision</h2>
+        <p style="color:var(--t2);line-height:1.85;margin-bottom:1rem;font-size:.92rem;">SoftTechz started in 2025 with one belief: <strong style="color:var(--t1);">every business deserves world-class digital products</strong> — not just those with million-dollar budgets.</p>
+        <p style="color:var(--t2);line-height:1.85;margin-bottom:2rem;font-size:.92rem;">We're a passionate team from Coimbatore building products that compete globally. Fresh start. Zero compromise. Maximum impact.</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div style="padding:1rem;background:var(--card);border:1px solid var(--line);border-radius:10px;">
+            <div style="color:var(--c1);font-weight:800;font-size:1.4rem;margin-bottom:4px;font-family:'Syne',sans-serif;">100%</div>
+            <div style="color:var(--t2);font-size:.8rem;">Client Satisfaction</div>
+          </div>
+          <div style="padding:1rem;background:var(--card);border:1px solid var(--line);border-radius:10px;">
+            <div style="color:var(--c2);font-weight:800;font-size:1.4rem;margin-bottom:4px;font-family:'Syne',sans-serif;">&lt;24hr</div>
+            <div style="color:var(--t2);font-size:.8rem;">Response Guarantee</div>
+          </div>
+          <div style="padding:1rem;background:var(--card);border:1px solid var(--line);border-radius:10px;">
+            <div style="color:var(--c3);font-weight:800;font-size:1.4rem;margin-bottom:4px;font-family:'Syne',sans-serif;">3-mo</div>
+            <div style="color:var(--t2);font-size:.8rem;">Free Post-Launch Support</div>
+          </div>
+          <div style="padding:1rem;background:var(--card);border:1px solid var(--line);border-radius:10px;">
+            <div style="color:var(--c1);font-weight:800;font-size:1.4rem;margin-bottom:4px;font-family:'Syne',sans-serif;">∞</div>
+            <div style="color:var(--t2);font-size:.8rem;">Revisions on Design</div>
+          </div>
+        </div>
+      </div>
+      <div class="rr">
+        <div style="background:var(--card);border:1px solid var(--line);border-radius:20px;padding:2rem;">
+          <div class="mono" style="font-size:.65rem;color:var(--c1);margin-bottom:1rem;letter-spacing:.12em;">// our-dna.js</div>
+          <div class="mono" style="font-size:.78rem;color:var(--t2);line-height:2.2;">
+            <span style="color:var(--c2);">const</span> <span style="color:var(--c1);">SoftTechz</span> = {<br/>
+            &nbsp;&nbsp;<span style="color:var(--t1);">mission</span>: <span style="color:var(--c3);">"Build. Ship. Wow."</span>,<br/>
+            &nbsp;&nbsp;<span style="color:var(--t1);">quality</span>: <span style="color:var(--c1);">Infinity</span>,<br/>
+            &nbsp;&nbsp;<span style="color:var(--t1);">deadlines</span>: <span style="color:var(--c1);">always</span>,<br/>
+            &nbsp;&nbsp;<span style="color:var(--t1);">communication</span>: <span style="color:var(--c1);">transparent</span>,<br/>
+            &nbsp;&nbsp;<span style="color:var(--t1);">excuses</span>: <span style="color:var(--c3);">never</span>,<br/>
+            &nbsp;&nbsp;<span style="color:var(--t1);">clients</span>: <span style="color:var(--c3);">"family"</span><br/>
+            };<br/>
+            <span style="color:#22c55e;">// Status: Ready to build yours 🚀</span>
+          </div>
+          <div style="margin-top:1.25rem;padding-top:1.25rem;border-top:1px solid var(--line);display:flex;gap:8px;align-items:center;">
+            <div style="width:8px;height:8px;border-radius:50%;background:#22c55e;box-shadow:0 0 8px #22c55e;animation:sp 1.5s infinite;"></div>
+            <span class="mono" style="font-size:.6rem;color:var(--t3);">STUDIO ONLINE · NO BUGS · READY TO BUILD</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="glow-line"/>
+
+<!-- ====================================================
+  TESTIMONIALS
+==================================================== -->
+<section id="testimonials" class="sec sec-alt">
+  <div class="container">
+    <div class="rv" style="text-align:center;margin-bottom:3rem;">
+      <div class="sec-tag" style="justify-content:center;">Client Love</div>
+      <h2 class="sec-h">Clients <span class="grad-txt">Love Us</span></h2>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px;">
+      <div class="test-card rv d1">
+        <div class="st-row">
+          <svg width="13" height="13" fill="var(--c3)" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg width="13" height="13" fill="var(--c3)" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg width="13" height="13" fill="var(--c3)" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg width="13" height="13" fill="var(--c3)" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg width="13" height="13" fill="var(--c3)" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        </div>
+        <p style="font-size:.88rem;color:var(--t2);line-height:1.75;margin-bottom:1.25rem;">"SoftTechz delivered our e-commerce site in 3 weeks. The design was stunning and sales doubled in the first month. These guys are the real deal — highly recommended!"</p>
+        <div style="display:flex;gap:10px;align-items:center;">
+          <div style="width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--c1),var(--c2));display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.8rem;color:#fff;">AK</div>
+          <div><div style="font-weight:700;font-size:.875rem;">Arun Kumar</div><div class="mono" style="font-size:.58rem;color:var(--t3);letter-spacing:.1em;">Founder · RetailX India</div></div>
+        </div>
+      </div>
+      <div class="test-card rv d2">
+        <div class="st-row">
+          <svg width="13" height="13" fill="var(--c3)" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg width="13" height="13" fill="var(--c3)" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg width="13" height="13" fill="var(--c3)" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg width="13" height="13" fill="var(--c3)" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg width="13" height="13" fill="var(--c3)" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        </div>
+        <p style="font-size:.88rem;color:var(--t2);line-height:1.75;margin-bottom:1.25rem;">"Our Flutter app was built on time, within budget. The animations were incredible — exactly what we imagined but couldn't articulate. Will hire again for sure!"</p>
+        <div style="display:flex;gap:10px;align-items:center;">
+          <div style="width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--c2),var(--c3));display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.8rem;color:#fff;">SP</div>
+          <div><div style="font-weight:700;font-size:.875rem;">Shreya Pillai</div><div class="mono" style="font-size:.58rem;color:var(--t3);letter-spacing:.1em;">CTO · HealthStack Labs</div></div>
+        </div>
+      </div>
+      <div class="test-card rv d3">
+        <div class="st-row">
+          <svg width="13" height="13" fill="var(--c3)" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg width="13" height="13" fill="var(--c3)" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg width="13" height="13" fill="var(--c3)" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg width="13" height="13" fill="var(--c3)" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg width="13" height="13" fill="var(--c3)" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        </div>
+        <p style="font-size:.88rem;color:var(--t2);line-height:1.75;margin-bottom:1.25rem;">"Impressive work ethic. Replied even at 11 PM. The final dashboard looked like something from top Dribbble. Zero bugs on launch. I'm a customer for life."</p>
+        <div style="display:flex;gap:10px;align-items:center;">
+          <div style="width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--c3),var(--c1));display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.8rem;color:#fff;">RV</div>
+          <div><div style="font-weight:700;font-size:.875rem;">Rohit Verma</div><div class="mono" style="font-size:.58rem;color:var(--t3);letter-spacing:.1em;">CEO · WealthOS Fintech</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="glow-line"/>
+
+<!-- ====================================================
+  PRICING
+==================================================== -->
+<section id="pricing" class="sec">
+  <div class="container">
+    <div class="rv" style="text-align:center;margin-bottom:3rem;">
+      <div class="sec-tag" style="justify-content:center;">Transparent Pricing</div>
+      <h2 class="sec-h">Simple Plans, <span class="grad-txt">Big Results</span></h2>
+      <p style="color:var(--t2);margin-top:1rem;font-size:.9rem;">No hidden fees. No surprises. Just great work at honest prices.</p>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;">
+      <div class="price-card rv d1">
+        <div class="mono" style="font-size:.6rem;letter-spacing:.2em;color:var(--t3);margin-bottom:.75rem;">STARTER</div>
+        <div class="price-amt" style="font-family:'Syne',sans-serif;">₹15K</div>
+        <div style="color:var(--t3);font-size:.8rem;margin-bottom:1.5rem;">+ GST / project</div>
+        <div style="margin-bottom:2rem;">
+          <div class="pc-check"><svg width="14" height="14" fill="none" stroke="var(--c1)" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> 5-page website</div>
+          <div class="pc-check"><svg width="14" height="14" fill="none" stroke="var(--c1)" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Mobile responsive</div>
+          <div class="pc-check"><svg width="14" height="14" fill="none" stroke="var(--c1)" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Basic animations</div>
+          <div class="pc-check"><svg width="14" height="14" fill="none" stroke="var(--c1)" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> 1-month support</div>
+          <div class="pc-check" style="opacity:.35;"><svg width="14" height="14" fill="none" stroke="var(--t3)" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Custom design</div>
+          <div class="pc-check" style="opacity:.35;"><svg width="14" height="14" fill="none" stroke="var(--t3)" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Backend / DB</div>
+        </div>
+        <a href="#contact" class="btn-pill btn-ghost" style="width:100%;justify-content:center;text-decoration:none;">Get Started</a>
+      </div>
+      <div class="price-card hot rv d2">
+        <div class="mono" style="font-size:.6rem;letter-spacing:.2em;color:var(--c1);margin-bottom:.75rem;">PROFESSIONAL</div>
+        <div class="price-amt" style="font-family:'Syne',sans-serif;background:linear-gradient(135deg,var(--c1),var(--c2));-webkit-background-clip:text;background-clip:text;color:transparent;">₹45K</div>
+        <div style="color:var(--t3);font-size:.8rem;margin-bottom:1.5rem;">+ GST / project</div>
+        <div style="margin-bottom:2rem;">
+          <div class="pc-check"><svg width="14" height="14" fill="none" stroke="var(--c1)" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Full web/app build</div>
+          <div class="pc-check"><svg width="14" height="14" fill="none" stroke="var(--c1)" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Custom UI/UX design</div>
+          <div class="pc-check"><svg width="14" height="14" fill="none" stroke="var(--c1)" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Advanced animations</div>
+          <div class="pc-check"><svg width="14" height="14" fill="none" stroke="var(--c1)" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Backend + Database</div>
+          <div class="pc-check"><svg width="14" height="14" fill="none" stroke="var(--c1)" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> 3-month support</div>
+          <div class="pc-check"><svg width="14" height="14" fill="none" stroke="var(--c1)" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> SEO optimization</div>
+        </div>
+        <a href="#contact" class="btn-pill btn-grad" style="width:100%;justify-content:center;text-decoration:none;">Start Project 🚀</a>
+      </div>
+      <div class="price-card rv d3">
+        <div class="mono" style="font-size:.6rem;letter-spacing:.2em;color:var(--t3);margin-bottom:.75rem;">ENTERPRISE</div>
+        <div class="price-amt" style="font-family:'Syne',sans-serif;">Custom</div>
+        <div style="color:var(--t3);font-size:.8rem;margin-bottom:1.5rem;">Let's talk scope</div>
+        <div style="margin-bottom:2rem;">
+          <div class="pc-check"><svg width="14" height="14" fill="none" stroke="var(--c1)" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Everything in Pro</div>
+          <div class="pc-check"><svg width="14" height="14" fill="none" stroke="var(--c1)" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> AI/ML integration</div>
+          <div class="pc-check"><svg width="14" height="14" fill="none" stroke="var(--c1)" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Dedicated team</div>
+          <div class="pc-check"><svg width="14" height="14" fill="none" stroke="var(--c1)" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Priority support</div>
+          <div class="pc-check"><svg width="14" height="14" fill="none" stroke="var(--c1)" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> NDA available</div>
+          <div class="pc-check"><svg width="14" height="14" fill="none" stroke="var(--c1)" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Monthly retainer</div>
+        </div>
+        <a href="#contact" class="btn-pill btn-ghost" style="width:100%;justify-content:center;text-decoration:none;">Let's Talk</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="glow-line"/>
+
+<!-- ====================================================
+  FAQ
+==================================================== -->
+<section id="faq" class="sec sec-alt">
+  <div class="container" style="max-width:780px;">
+    <div class="rv" style="text-align:center;margin-bottom:3rem;">
+      <div class="sec-tag" style="justify-content:center;">FAQ</div>
+      <h2 class="sec-h">Quick <span class="grad-txt">Answers</span></h2>
+    </div>
+    <div class="rv d1 faq-it"><div class="faq-q" onclick="tFaq(this.parentElement)">How long does a project take? <div class="faq-ico"><svg width="9" height="9" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></div><div class="faq-a">Websites: 1–3 weeks. Mobile apps: 4–8 weeks. Complex platforms: 2–4 months. We share a timeline upfront and always stick to it.</div></div>
+    <div class="rv d2 faq-it"><div class="faq-q" onclick="tFaq(this.parentElement)">Do you work with international clients? <div class="faq-ico"><svg width="9" height="9" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></div><div class="faq-a">Yes! We work with clients across the US, UK, UAE, and Singapore. We communicate in English and work across time zones using Notion, Slack, and Loom.</div></div>
+    <div class="rv d3 faq-it"><div class="faq-q" onclick="tFaq(this.parentElement)">What's your payment structure? <div class="faq-ico"><svg width="9" height="9" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></div><div class="faq-a">Milestone-based: 40% advance, 40% at design approval, 20% on final delivery. We accept bank transfer, UPI, PayPal, and crypto.</div></div>
+    <div class="rv d4 faq-it"><div class="faq-q" onclick="tFaq(this.parentElement)">Will I own the source code? <div class="faq-ico"><svg width="9" height="9" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></div><div class="faq-a">100%. Full source code delivered via GitHub on final payment. Clean, documented, no lock-ins ever.</div></div>
+    <div class="rv d5 faq-it"><div class="faq-q" onclick="tFaq(this.parentElement)">Do you provide post-launch support? <div class="faq-ico"><svg width="9" height="9" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></div><div class="faq-a">Every project includes 3 months free support. After that, affordable monthly retainers to keep things updated and bug-free.</div></div>
+  </div>
+</section>
+
+<hr class="glow-line"/>
+
+<!-- ====================================================
+  CTA BANNER
+==================================================== -->
+<section style="padding:6rem 0;background:linear-gradient(135deg,var(--c2),var(--c1));background-size:200%;animation:grad-shift 6s ease infinite;position:relative;overflow:hidden;">
+  <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;"></div>
+  <div class="container" style="text-align:center;position:relative;z-index:1;" class="rv">
+    <div class="mono" style="font-size:.6rem;letter-spacing:.3em;color:rgba(255,255,255,.6);margin-bottom:1rem;">READY TO BUILD?</div>
+    <h2 style="font-family:'Syne',sans-serif;font-size:clamp(2rem,6vw,4rem);font-weight:800;color:#fff;line-height:1.1;margin-bottom:1.5rem;letter-spacing:-.03em;">Let's Turn Your Idea Into<br/><em style="font-style:normal;text-shadow:0 0 40px rgba(255,255,255,.4);">Something Legendary</em></h2>
+    <p style="color:rgba(255,255,255,.75);font-size:1rem;margin-bottom:2.5rem;max-width:480px;margin-left:auto;margin-right:auto;">Drop us a message. We respond within 24 hours with a free project proposal.</p>
+    <div style="display:flex;flex-wrap:wrap;gap:14px;justify-content:center;">
+      <a href="#contact" style="display:inline-flex;align-items:center;gap:8px;background:#fff;color:#000;padding:14px 34px;font-weight:800;font-size:.88rem;letter-spacing:.05em;text-transform:uppercase;border-radius:8px;text-decoration:none;transition:all .3s;box-shadow:0 8px 28px rgba(0,0,0,.2);" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform=''">Start Project 🚀</a>
+      <a href="https://wa.me/911234567890" target="_blank" style="display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.15);color:#fff;padding:14px 34px;font-weight:700;font-size:.88rem;letter-spacing:.05em;text-transform:uppercase;border:1.5px solid rgba(255,255,255,.4);border-radius:8px;text-decoration:none;transition:all .3s;" onmouseover="this.style.background='rgba(255,255,255,.25)'" onmouseout="this.style.background='rgba(255,255,255,.15)'">💬 WhatsApp Us</a>
+    </div>
+  </div>
+</section>
+
+<!-- ====================================================
+  CONTACT
+==================================================== -->
+<section id="contact" class="sec">
+  <div class="container">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:4rem;" class="proc-resp">
+      <div class="rl">
+        <div class="sec-tag">Contact</div>
+        <h2 class="sec-h" style="margin-bottom:1.5rem;">Let's <span class="grad-txt">Connect</span></h2>
+        <p style="color:var(--t2);line-height:1.8;font-size:.92rem;margin-bottom:2rem;">Tell us about your project. More detail = better proposal. We'll respond within 24 hours.</p>
+        <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:2rem;">
+          <div style="display:flex;gap:12px;align-items:center;">
+            <div style="width:42px;height:42px;background:rgba(var(--c1r),.1);border:1px solid rgba(var(--c1r),.2);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+              <svg width="17" height="17" fill="none" stroke="var(--c1)" stroke-width="2" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.5 19.79 19.79 0 01.1 4.34 2 2 0 012.08 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 9.91a16 16 0 006.29 6.29l1.34-1.34a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+            </div>
+            <div><div class="mono" style="font-size:.55rem;color:var(--t3);letter-spacing:.15em;margin-bottom:2px;">PHONE</div><a href="tel:+911234567890" style="font-weight:700;color:var(--t1);text-decoration:none;transition:color .2s;" onmouseover="this.style.color='var(--c1)'" onmouseout="this.style.color='var(--t1)'">+91 12345 67890</a></div>
+          </div>
+          <div style="display:flex;gap:12px;align-items:center;">
+            <div style="width:42px;height:42px;background:rgba(var(--c2r),.1);border:1px solid rgba(var(--c2r),.2);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+              <svg width="17" height="17" fill="none" stroke="var(--c2)" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            </div>
+            <div><div class="mono" style="font-size:.55rem;color:var(--t3);letter-spacing:.15em;margin-bottom:2px;">EMAIL</div><a href="mailto:hello@softtechz.in" style="font-weight:700;color:var(--t1);text-decoration:none;transition:color .2s;" onmouseover="this.style.color='var(--c2)'" onmouseout="this.style.color='var(--t1)'">hello@softtechz.in</a></div>
+          </div>
+          <div style="display:flex;gap:12px;align-items:center;">
+            <div style="width:42px;height:42px;background:rgba(var(--c3r),0.1);border:1px solid rgba(var(--c3r),.2);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;" style="--c3r:255,107,43;">
+              <svg width="17" height="17" fill="none" stroke="var(--c3)" stroke-width="2" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            </div>
+            <div><div class="mono" style="font-size:.55rem;color:var(--t3);letter-spacing:.15em;margin-bottom:2px;">LOCATION</div><div style="font-weight:700;">Coimbatore, Tamil Nadu, India</div></div>
+          </div>
+        </div>
+        <!-- Hours -->
+        <div style="background:var(--card);border:1px solid var(--line);border-radius:12px;padding:1.25rem;">
+          <div class="mono" style="font-size:.55rem;letter-spacing:.2em;color:var(--t3);margin-bottom:10px;">OFFICE HOURS</div>
+          <div id="hr-list"></div>
+          <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--line);display:flex;align-items:center;gap:6px;">
+            <div id="hr-dot" style="width:7px;height:7px;border-radius:50%;animation:sp 1.5s infinite;"></div>
+            <span class="mono" style="font-size:.58rem;" id="hr-status">Checking...</span>
+          </div>
+        </div>
+      </div>
+      <div class="rr">
+        <form onsubmit="handleForm(event)" style="background:var(--card);border:1px solid var(--line);border-radius:20px;padding:2rem;">
+          <label class="f-lbl">YOUR NAME *</label>
+          <div style="margin-bottom:1rem;"><input type="text" required placeholder="Raj Kumar" class="f-inp"/></div>
+          <label class="f-lbl">EMAIL ADDRESS *</label>
+          <div style="margin-bottom:1rem;"><input type="email" required placeholder="raj@company.com" class="f-inp"/></div>
+          <label class="f-lbl">PHONE / WHATSAPP</label>
+          <div style="margin-bottom:1rem;"><input type="tel" placeholder="+91 98xxx xxxxx" class="f-inp"/></div>
+          <label class="f-lbl">SERVICE NEEDED</label>
+          <div style="margin-bottom:1rem;">
+            <select class="f-inp" style="appearance:none;">
+              <option value="">Select a service...</option>
+              <option>Web Development</option><option>Mobile App</option>
+              <option>UI/UX Design</option><option>AI Integration</option>
+              <option>E-Commerce</option><option>Full Product Build</option>
+            </select>
+          </div>
+          <label class="f-lbl">PROJECT DETAILS *</label>
+          <div style="margin-bottom:1.25rem;"><textarea required rows="4" placeholder="Tell us about your project, timeline, budget..." class="f-inp" style="resize:none;"></textarea></div>
+          <button type="submit" class="btn-pill btn-grad" style="width:100%;justify-content:center;padding:13px;font-size:.88rem;border-radius:10px;">Send Message 🚀</button>
+          <p id="form-ok" style="display:none;text-align:center;margin-top:1rem;font-family:'Space Mono',monospace;font-size:.62rem;letter-spacing:.2em;color:#22c55e;">✓ SENT! WE'LL REPLY WITHIN 24 HOURS</p>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====================================================
+  FOOTER
+==================================================== -->
+<footer style="padding:4rem 0 2rem;">
+  <div class="container">
+    <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:2.5rem;margin-bottom:3rem;" class="ftr-grid">
+      <div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:1rem;">
+          <div class="logo-box" style="width:28px;height:28px;border-radius:7px;"><svg width="13" height="13" fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></div>
+          <span class="logo-txt" style="font-size:1.1rem;">SoftTechz 🌐</span>
+        </div>
+        <p style="color:var(--t2);font-size:.82rem;line-height:1.7;max-width:240px;margin-bottom:1.25rem;">Next-gen digital studio. Web & mobile that grow your business.</p>
+        <div style="display:flex;gap:8px;">
+          <a href="#" class="icon-btn" style="width:32px;height:32px;border-radius:7px;"><svg width="13" height="13" fill="currentColor" viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg></a>
+          <a href="#" class="icon-btn" style="width:32px;height:32px;border-radius:7px;"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
+          <a href="https://github.com" target="_blank" class="icon-btn" style="width:32px;height:32px;border-radius:7px;"><svg width="13" height="13" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg></a>
+          <a href="https://wa.me/911234567890" target="_blank" class="icon-btn" style="width:32px;height:32px;border-radius:7px;border-color:rgba(37,211,102,.3);color:#25D366;"><svg width="13" height="13" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg></a>
+        </div>
+      </div>
+      <div>
+        <div class="ftr-h">Services</div>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:7px;">
+          <li><a href="#services" style="color:var(--t2);text-decoration:none;font-size:.82rem;transition:color .2s;" onmouseover="this.style.color='var(--c1)'" onmouseout="this.style.color='var(--t2)'">Web Development</a></li>
+          <li><a href="#services" style="color:var(--t2);text-decoration:none;font-size:.82rem;transition:color .2s;" onmouseover="this.style.color='var(--c1)'" onmouseout="this.style.color='var(--t2)'">App Development</a></li>
+          <li><a href="#services" style="color:var(--t2);text-decoration:none;font-size:.82rem;transition:color .2s;" onmouseover="this.style.color='var(--c1)'" onmouseout="this.style.color='var(--t2)'">UI/UX Design</a></li>
+          <li><a href="#services" style="color:var(--t2);text-decoration:none;font-size:.82rem;transition:color .2s;" onmouseover="this.style.color='var(--c1)'" onmouseout="this.style.color='var(--t2)'">AI Integration</a></li>
+          <li><a href="#services" style="color:var(--t2);text-decoration:none;font-size:.82rem;transition:color .2s;" onmouseover="this.style.color='var(--c1)'" onmouseout="this.style.color='var(--t2)'">E-Commerce</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="ftr-h">Company</div>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:7px;">
+          <li><a href="#about" style="color:var(--t2);text-decoration:none;font-size:.82rem;transition:color .2s;" onmouseover="this.style.color='var(--c1)'" onmouseout="this.style.color='var(--t2)'">About Us</a></li>
+          <li><a href="#projects" style="color:var(--t2);text-decoration:none;font-size:.82rem;transition:color .2s;" onmouseover="this.style.color='var(--c1)'" onmouseout="this.style.color='var(--t2)'">Projects</a></li>
+          <li><a href="#process" style="color:var(--t2);text-decoration:none;font-size:.82rem;transition:color .2s;" onmouseover="this.style.color='var(--c1)'" onmouseout="this.style.color='var(--t2)'">Process</a></li>
+          <li><a href="#testimonials" style="color:var(--t2);text-decoration:none;font-size:.82rem;transition:color .2s;" onmouseover="this.style.color='var(--c1)'" onmouseout="this.style.color='var(--t2)'">Reviews</a></li>
+          <li><a href="#contact" style="color:var(--t2);text-decoration:none;font-size:.82rem;transition:color .2s;" onmouseover="this.style.color='var(--c1)'" onmouseout="this.style.color='var(--t2)'">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="ftr-h">Contact</div>
+        <div style="display:flex;flex-direction:column;gap:6px;font-size:.82rem;color:var(--t2);line-height:1.8;">
+          <div>📞 +91 12345 67890</div>
+          <div>✉️ hello@softtechz.in</div>
+          <div>📍 Coimbatore, TN</div>
+          <div id="ftr-status" style="margin-top:4px;"></div>
+        </div>
+      </div>
+    </div>
+    <style>.ftr-grid{grid-template-columns:2fr 1fr 1fr 1fr;}@media(max-width:768px){.ftr-grid{grid-template-columns:1fr 1fr;}}</style>
+    <div style="border-top:1px solid var(--line);padding-top:1.5rem;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:1rem;">
+      <span class="mono" style="font-size:.6rem;color:var(--t3);letter-spacing:.08em;">© 2025 SOFTTECHZ. ALL RIGHTS RESERVED.</span>
+      <span class="mono" style="font-size:.6rem;color:var(--t3);letter-spacing:.08em;">BUILT WITH ❤️ IN COIMBATORE, INDIA</span>
+    </div>
+  </div>
+</footer>
+
+<!-- SCROLL PHONE -->
+<div id="scroll-ph">
+  <div class="ph-outer">
+    <div class="ph-notch"></div>
+    <div class="ph-scr">
+      <div class="ph-scr-txt">&lt;/softechz&gt;<br/>scrolling...<br/>✨ magic</div>
+    </div>
+    <div class="ph-glow"></div>
+  </div>
+</div>
+
+<!-- FLOATING BUTTONS -->
+<div id="floats">
+  <button id="fl-top" class="fl-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>
+  </button>
+  <a href="tel:+911234567890" class="fl-btn" style="background:var(--c1);box-shadow:0 4px 18px rgba(var(--c1r),.4);">
+    <svg width="18" height="18" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.5 19.79 19.79 0 01.1 4.34 2 2 0 012.08 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 9.91a16 16 0 006.29 6.29l1.34-1.34a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+  </a>
+  <a href="https://wa.me/911234567890" target="_blank" class="fl-btn" style="background:#25D366;box-shadow:0 4px 18px rgba(37,211,102,.4);">
+    <svg width="18" height="18" fill="#fff" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+  </a>
+</div>
+
+<!-- THEME BUTTON -->
+<button id="th-btn" onclick="toggleThPanel()">
+  <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M20 12h-2M17.66 17.66l-1.41-1.41M12 20v-2M6.34 17.66l1.41-1.41M4 12h2M6.34 6.34L7.75 7.75M12 4V2"/></svg>
+</button>
+
+<!-- THEME PANEL -->
+<div id="th-panel">
+  <div class="th-head">
+    <span class="mono" style="font-size:.65rem;font-weight:700;color:#fff;letter-spacing:.12em;">THEME STUDIO</span>
+    <button onclick="toggleThPanel()" style="background:rgba(255,255,255,.2);border:none;color:#fff;width:24px;height:24px;border-radius:6px;cursor:none;font-size:.9rem;display:flex;align-items:center;justify-content:center;">×</button>
+  </div>
+  <div class="th-body">
+    <!-- Mode toggle -->
+    <div class="th-sl">DISPLAY MODE</div>
+    <div style="display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--card2);border:1px solid var(--line);border-radius:8px;">
+      <svg width="14" height="14" fill="none" stroke="var(--c3)" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+      <span style="font-size:.78rem;color:var(--t2);flex:1;">Light</span>
+      <div id="mode-tgl" class="tgl on" onclick="toggleMode()"><div class="tgl-k"></div></div>
+      <span style="font-size:.78rem;color:var(--t2);">Dark</span>
+      <svg width="14" height="14" fill="none" stroke="var(--c1)" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+    </div>
+
+    <!-- Presets -->
+    <div class="th-sl">COLOR PRESETS</div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;">
+      <div class="swatch on" style="background:#00D4FF;" onclick="applyPreset('#00D4FF','#7C3AED','#FF6B2B')" title="Cyber"></div>
+      <div class="swatch" style="background:#EF4444;" onclick="applyPreset('#EF4444','#F97316','#7C3AED')" title="Fire Red"></div>
+      <div class="swatch" style="background:#10B981;" onclick="applyPreset('#10B981','#06B6D4','#F59E0B')" title="Matrix Green"></div>
+      <div class="swatch" style="background:#8B5CF6;" onclick="applyPreset('#8B5CF6','#EC4899','#00D4FF')" title="Purple"></div>
+      <div class="swatch" style="background:#F97316;" onclick="applyPreset('#F97316','#EF4444','#8B5CF6')" title="Lava"></div>
+      <div class="swatch" style="background:#EC4899;" onclick="applyPreset('#EC4899','#8B5CF6','#00D4FF')" title="Pink"></div>
+      <div class="swatch" style="background:#F59E0B;" onclick="applyPreset('#F59E0B','#EF4444','#1E40AF')" title="Gold"></div>
+      <div class="swatch" style="background:#64748B;border:2px solid rgba(255,255,255,.15);" onclick="applyPreset('#94A3B8','#CBD5E1','#64748B')" title="Mono"></div>
+    </div>
+
+    <!-- Pickers -->
+    <div class="th-sl">CUSTOM COLORS</div>
+    <div class="c-row">
+      <input type="color" id="p1" value="#00D4FF" oninput="applyC('c1',this.value)"/>
+      <div style="flex:1;"><div class="mono" style="font-size:.52rem;color:var(--t3);letter-spacing:.12em;">PRIMARY</div><div id="l1" class="mono" style="font-size:.65rem;color:var(--c1);">#00D4FF</div></div>
+      <div id="pv1" style="width:28px;height:28px;border-radius:6px;background:#00D4FF;border:1px solid var(--line);"></div>
+    </div>
+    <div class="c-row">
+      <input type="color" id="p2" value="#7C3AED" oninput="applyC('c2',this.value)"/>
+      <div style="flex:1;"><div class="mono" style="font-size:.52rem;color:var(--t3);letter-spacing:.12em;">ACCENT</div><div id="l2" class="mono" style="font-size:.65rem;color:var(--c2);">#7C3AED</div></div>
+      <div id="pv2" style="width:28px;height:28px;border-radius:6px;background:#7C3AED;border:1px solid var(--line);"></div>
+    </div>
+    <div class="c-row">
+      <input type="color" id="p3" value="#FF6B2B" oninput="applyC('c3',this.value)"/>
+      <div style="flex:1;"><div class="mono" style="font-size:.52rem;color:var(--t3);letter-spacing:.12em;">SECONDARY</div><div id="l3" class="mono" style="font-size:.65rem;color:var(--c3);">#FF6B2B</div></div>
+      <div id="pv3" style="width:28px;height:28px;border-radius:6px;background:#FF6B2B;border:1px solid var(--line);"></div>
+    </div>
+
+    <button onclick="resetColors()" style="width:100%;margin-top:12px;padding:9px;background:var(--card2);border:1px solid var(--line);border-radius:8px;color:var(--t2);font-family:'Space Mono',monospace;font-size:.58rem;letter-spacing:.18em;cursor:none;transition:all .2s;" onmouseover="this.style.borderColor='var(--c1)';this.style.color='var(--c1)'" onmouseout="this.style.borderColor='var(--line)';this.style.color='var(--t2)'">↺ RESET TO DEFAULT</button>
+  </div>
+</div>
+
+<!-- OFFER MODAL -->
+<div id="offer-modal">
+  <div id="om-box">
+    <button onclick="document.getElementById('offer-modal').classList.remove('on')" style="position:absolute;top:12px;right:12px;background:var(--card2);border:1px solid var(--line);border-radius:8px;width:30px;height:30px;display:flex;align-items:center;justify-content:center;color:var(--t2);cursor:none;font-size:.9rem;transition:all .2s;" onmouseover="this.style.borderColor='var(--c1)';this.style.color='var(--c1)'" onmouseout="this.style.borderColor='var(--line)';this.style.color='var(--t2)'">×</button>
+    <div class="mono" style="font-size:.58rem;letter-spacing:.25em;color:var(--c1);margin-bottom:.75rem;">🚀 LAUNCH OFFER</div>
+    <h3 style="font-family:'Syne',sans-serif;font-size:1.75rem;font-weight:800;line-height:1.15;margin-bottom:1rem;">First Project <br/><span class="grad-txt">30% OFF</span></h3>
+    <p style="color:var(--t2);font-size:.85rem;line-height:1.7;margin-bottom:1.5rem;">We're new, hungry, and ready to prove ourselves. Be among our first 10 clients and get a massive discount.</p>
+    <div style="background:var(--card2);border:1px solid rgba(var(--c1r),.2);border-radius:10px;padding:1rem;margin-bottom:1.5rem;">
+      <div class="mono" style="font-size:.55rem;color:var(--t3);letter-spacing:.2em;margin-bottom:6px;">PROMO CODE</div>
+      <div style="font-family:'Syne',sans-serif;font-size:1.75rem;font-weight:800;color:var(--c1);letter-spacing:.08em;">LAUNCH30</div>
+    </div>
+    <a href="#contact" onclick="document.getElementById('offer-modal').classList.remove('on')" class="btn-pill btn-grad" style="display:flex;justify-content:center;padding:13px;text-decoration:none;font-size:.85rem;border-radius:10px;">Claim My 30% Discount 🎯</a>
+    <button onclick="document.getElementById('offer-modal').classList.remove('on')" style="display:block;width:100%;margin-top:10px;background:none;border:none;color:var(--t3);font-size:.72rem;cursor:none;text-decoration:underline;text-align:center;">No thanks, I'll pay full price</button>
+  </div>
+</div>
+
+<!-- =====================================================
+   JAVASCRIPT
+===================================================== -->
+<script>
+'use strict';
+
+/* ─── CURSOR ─── */
+const curD = document.getElementById('cur-d');
+const curR = document.getElementById('cur-r');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{
+  mx=e.clientX; my=e.clientY;
+  curD.style.left=mx+'px'; curD.style.top=my+'px';
+});
+(function tick(){
+  rx+=(mx-rx)*.13; ry+=(my-ry)*.13;
+  curR.style.left=rx+'px'; curR.style.top=ry+'px';
+  requestAnimationFrame(tick);
+})();
+document.querySelectorAll('a,button,input,select,textarea,[onclick]').forEach(el=>{
+  el.addEventListener('mouseenter',()=>document.body.classList.add('h-cur'));
+  el.addEventListener('mouseleave',()=>document.body.classList.remove('h-cur'));
+});
+
+/* ─── MATRIX LOADER ─── */
+(()=>{
+  const cv=document.getElementById('ldr-canvas');
+  const ctx=cv.getContext('2d');
+  cv.width=window.innerWidth; cv.height=window.innerHeight;
+  const chars='SoftTechz01アイウエオカキクケ<>/{}[]()▓░';
+  const cols=Math.floor(cv.width/16);
+  const drops=new Array(cols).fill(1);
+  function draw(){
+    ctx.fillStyle='rgba(0,0,0,.07)';
+    ctx.fillRect(0,0,cv.width,cv.height);
+    drops.forEach((y,i)=>{
+      ctx.fillStyle=i%6===0?'#7C3AED':i%3===0?'#FF6B2B':'#00D4FF';
+      ctx.font='13px Space Mono,monospace';
+      ctx.fillText(chars[Math.floor(Math.random()*chars.length)],i*16,y*16);
+      if(y*16>cv.height&&Math.random()>.975) drops[i]=0;
+      drops[i]++;
+    });
+  }
+  const iv=setInterval(draw,50);
+  setTimeout(()=>{
+    clearInterval(iv);
+    const L=document.getElementById('loader');
+    L.style.opacity='0';
+    setTimeout(()=>L.style.display='none',800);
+  },3300);
+})();
+
+/* ─── HERO PARTICLES ─── */
+(()=>{
+  const cv=document.getElementById('hero-cv');
+  if(!cv)return;
+  const ctx=cv.getContext('2d');
+  function resize(){cv.width=cv.parentElement.offsetWidth;cv.height=cv.parentElement.offsetHeight;}
+  resize();
+  window.addEventListener('resize',resize);
+  const pts=Array.from({length:70},()=>({
+    x:Math.random()*cv.width,y:Math.random()*cv.height,
+    vx:(Math.random()-.5)*.35,vy:(Math.random()-.5)*.35,
+    r:Math.random()*1.8+.4
+  }));
+  function frame(){
+    ctx.clearRect(0,0,cv.width,cv.height);
+    const c=getComputedStyle(document.documentElement).getPropertyValue('--c1').trim()||'#00D4FF';
+    pts.forEach(p=>{
+      p.x=(p.x+p.vx+cv.width)%cv.width;
+      p.y=(p.y+p.vy+cv.height)%cv.height;
+      ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle=c+'55';ctx.fill();
+    });
+    for(let i=0;i<pts.length;i++)for(let j=i+1;j<pts.length;j++){
+      const dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y;
+      const d=Math.sqrt(dx*dx+dy*dy);
+      if(d<90){
+        ctx.beginPath();ctx.moveTo(pts[i].x,pts[i].y);ctx.lineTo(pts[j].x,pts[j].y);
+        ctx.strokeStyle=c+Math.floor((1-d/90)*18).toString(16).padStart(2,'0');
+        ctx.lineWidth=.4;ctx.stroke();
+      }
+    }
+    requestAnimationFrame(frame);
+  }
+  frame();
+})();
+
+/* ─── TYPEWRITER ─── */
+const phrases=[
+  'Full-Stack Web Developers 💻',
+  'Mobile App Creators 📱',
+  'UI/UX Designers 🎨',
+  'AI Integration Experts 🤖',
+  'SEO Growth Hackers 📈',
+  'Your Dream Team 🚀',
+];
+let pi=0,ci=0,del=false;
+const tEl=document.getElementById('tw-span');
+function tw(){
+  const s=phrases[pi];
+  if(!del){tEl.textContent=s.substring(0,ci+1);ci++;if(ci===s.length){setTimeout(()=>{del=true;tw();},2000);return;}}
+  else{tEl.textContent=s.substring(0,ci-1);ci--;if(ci===0){del=false;pi=(pi+1)%phrases.length;}}
+  setTimeout(tw,del?40:80);
+}
+setTimeout(tw,3600);
+
+/* ─── NAVBAR SCROLL ─── */
+const nav=document.getElementById('nav');
+function onScroll(){
+  nav.classList.toggle('sc',window.scrollY>60);
+  document.getElementById('fl-top').classList.toggle('on',window.scrollY>400);
+  updatePhone();
+}
+window.addEventListener('scroll',onScroll,{passive:true});
+
+/* ─── MOBILE NAV ─── */
+function toggleMob(){document.getElementById('mob-nav').classList.toggle('open');}
+
+/* ─── SCROLL PHONE ─── */
+let phDropped=false;
+function updatePhone(){
+  const ph=document.getElementById('scroll-ph');
+  const sY=window.scrollY;
+  const maxS=document.documentElement.scrollHeight-window.innerHeight;
+  const pct=sY/maxS;
+  const outer=ph.querySelector('.ph-outer');
+  if(sY>350){
+    ph.classList.add('in');
+    const wobble=Math.sin(Date.now()*.0015)*5;
+    if(pct>0.9&&!phDropped){
+      phDropped=true;ph.classList.add('drop');
+      setTimeout(()=>{ph.classList.remove('in','drop');phDropped=false;},750);
+    } else if(!phDropped){
+      outer.style.transform=`rotate(${wobble}deg) translateY(${(pct*15)-8}px)`;
+    }
+  } else {
+    ph.classList.remove('in');phDropped=false;
+  }
+}
+setInterval(()=>{
+  if(document.getElementById('scroll-ph').classList.contains('in')&&!phDropped){
+    const w=Math.sin(Date.now()*.0015)*5;
+    const o=document.querySelector('#scroll-ph .ph-outer');
+    if(o)o.style.transform=`rotate(${w}deg)`;
+  }
+},50);
+
+/* ─── PROJECT DATA ─── */
+const PD=[
+  {n:'ShopNova Platform',cat:'E-Commerce',tech:['Next.js','Node.js','MongoDB','Stripe','Cloudinary'],dur:'6 weeks',result:'2× conversion rate',desc:'Full-stack D2C e-commerce platform with real-time inventory, Stripe payments, wishlist, order tracking and admin dashboard. Built for a brand scaling to ₹1Cr+ monthly revenue.'},
+  {n:'MediTrack App',cat:'Healthcare',tech:['Flutter','Firebase','GetX','Hive','FCM'],dur:'8 weeks',result:'4.8★ App Store',desc:'Cross-platform medication tracker, doctor appointments, health records and emergency contacts. HIPAA-compliant with end-to-end encryption.'},
+  {n:'WealthOS Dashboard',cat:'FinTech',tech:['React','D3.js','Python','FastAPI','Redis'],dur:'10 weeks',result:'99.9% uptime',desc:'Real-time financial analytics with live market feeds, portfolio tracking, P&L reports, and AI-powered insights. Handles 100K+ data points with smooth visualizations.'},
+  {n:'NeuralChat AI',cat:'AI Product',tech:['Python','OpenAI','LangChain','FastAPI','Pinecone'],dur:'4 weeks',result:'40hr/week saved',desc:'GPT-4 powered support bot with memory, multi-language, sentiment analysis and CRM integration. Deployed for a SaaS company replacing 40+ hours of weekly support.'},
+  {n:'PropFind Portal',cat:'Real Estate',tech:['Vue.js','Laravel','PostgreSQL','Elasticsearch'],dur:'12 weeks',result:'15K+ listings',desc:'Property discovery portal with advanced filtering, virtual tour integration, mortgage calculator, neighborhood analytics, and agent chat. 15K+ properties from day one.'},
+  {n:'LearnArc LMS',cat:'EduTech',tech:['Next.js','PostgreSQL','Cloudinary','Razorpay'],dur:'14 weeks',result:'500+ learners',desc:'Full LMS with course builder, video streaming, quizzes, certificates, student analytics, and payment gateway. 500+ active learners in the first month.'},
+];
+
+/* ─── TERMINAL ANIMATION ─── */
+function runTerminal(idx){
+  const ov=document.getElementById('term-ov');
+  const out=document.getElementById('term-out');
+  const pd=document.getElementById('proj-detail');
+  const pdi=document.getElementById('pd-inner');
+  out.innerHTML=''; pd.classList.remove('show'); ov.classList.add('show');
+  const p=PD[idx];
+  const c=['#00D4FF','#7C3AED','#FF6B2B'];
+  const col=c[idx%3];
+  const lines=[
+    {t:0,  h:`<span class="t-green">➜</span> <span class="t-cyan">softtechz</span><span class="t-dim">@studio</span> <span class="t-dim">~</span>`},
+    {t:200,h:`<span class="t-dim">$</span> <span class="t-white">analyze</span> --project="${p.n}"`},
+    {t:500,h:`<span class="t-dim">⟳</span> <span class="t-cyan">Initializing code analysis engine...</span>`},
+    {t:900,h:`<span class="t-dim">✓</span> Scanning project structure`},
+    {t:1100,h:`<span class="t-dim">✓</span> Analyzing tech stack: <span class="t-orange">${p.tech.join(' · ')}</span>`},
+    {t:1350,h:`<span class="t-dim">✓</span> Running performance audit...`},
+    {t:1600,h:`<span class="t-dim">✓</span> Checking code quality score`},
+    {t:1850,h:`<span class="t-green">◉</span> <span class="t-white">CODE QUALITY:</span> <span class="t-green">98/100</span> ✨`},
+    {t:2100,h:`<span class="t-green">◉</span> <span class="t-white">PERFORMANCE:</span> <span class="t-green">96/100</span> ⚡`},
+    {t:2300,h:`<span class="t-green">◉</span> <span class="t-white">ACCESSIBILITY:</span> <span class="t-green">100/100</span> ♿`},
+    {t:2500,h:`<span class="t-green">◉</span> <span class="t-white">TIMELINE:</span> <span class="t-cyan">${p.dur}</span>`},
+    {t:2700,h:`<span class="t-green">◉</span> <span class="t-white">KEY RESULT:</span> <span style="color:${col};">${p.result}</span>`},
+    {t:2900,h:`<span class="t-dim">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>`},
+    {t:3100,h:`<span class="t-green">✓</span> Analysis complete. Loading project details...`},
+  ];
+  lines.forEach(({t,h})=>setTimeout(()=>{
+    const div=document.createElement('div');
+    div.className='term-line';div.innerHTML=h+'<br/>';
+    div.style.animationDelay='0s';
+    out.appendChild(div);
+    out.scrollTop=out.scrollHeight;
+  },t));
+  setTimeout(()=>{
+    pd.classList.add('show');
+    pdi.innerHTML=`
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:1rem;">
+        <div>
+          <div style="font-family:'Space Mono',monospace;font-size:.55rem;letter-spacing:.2em;color:${col};margin-bottom:4px;">${p.cat.toUpperCase()}</div>
+          <div style="font-family:'Syne',sans-serif;font-size:1.2rem;font-weight:800;color:var(--t1);">${p.n}</div>
+        </div>
+        <a href="#contact" onclick="closeTerm()" style="display:inline-flex;align-items:center;gap:6px;padding:8px 18px;background:linear-gradient(135deg,var(--c1),var(--c2));color:#fff;border-radius:7px;text-decoration:none;font-weight:700;font-size:.78rem;letter-spacing:.05em;text-transform:uppercase;transition:all .2s;">Build Similar →</a>
+      </div>
+      <p style="font-size:.82rem;color:var(--t2);line-height:1.7;margin-bottom:1rem;">${p.desc}</p>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;">
+        ${p.tech.map(t=>`<span class="t-tag">${t}</span>`).join('')}
+      </div>`;
+  },3400);
+}
+function closeTerm(){
+  document.getElementById('term-ov').classList.remove('show');
+  document.getElementById('term-out').innerHTML='';
+  document.getElementById('proj-detail').classList.remove('show');
+}
+document.getElementById('term-ov').addEventListener('click',e=>{
+  if(e.target===document.getElementById('term-ov'))closeTerm();
+});
+
+/* ─── VIDEO MODAL ─── */
+function openVideoModal(url){
+  const m=document.getElementById('vid-modal');
+  document.getElementById('vid-frame').src=url;
+  m.style.display='flex';
+}
+
+/* ─── BUSINESS STATUS ─── */
+function updateStatus(){
+  const n=new Date(),h=n.getHours(),m=n.getMinutes();
+  const mins=h*60+m,open=mins>=9*60&&mins<23*60;
+  const pill=document.getElementById('status-pill');
+  if(pill){
+    pill.style.background=open?'rgba(34,197,94,.1)':'rgba(239,68,68,.1)';
+    pill.style.border=open?'1px solid rgba(34,197,94,.25)':'1px solid rgba(239,68,68,.25)';
+    pill.style.color=open?'#22c55e':'#ef4444';
+    pill.style.padding='3px 10px';pill.style.borderRadius='999px';
+    pill.querySelector('.sdot').style.background=open?'#22c55e':'#ef4444';
+    document.getElementById('st-txt').textContent=open?'AVAILABLE':'OFFLINE';
+  }
+  const fs=document.getElementById('ftr-status');
+  if(fs)fs.innerHTML=open?'🟢 <span style="color:#22c55e;">We\'re Online</span>':'🔴 <span style="color:#ef4444;">Back 9 AM</span>';
+  const hd=document.getElementById('hr-dot'),hs=document.getElementById('hr-status');
+  if(hd){hd.style.background=open?'#22c55e':'#ef4444';}
+  if(hs)hs.innerHTML=open?'<span style="color:#22c55e;">We are OPEN right now</span>':'<span style="color:#ef4444;">Currently CLOSED · Opens 9AM</span>';
+}
+updateStatus();setInterval(updateStatus,60000);
+
+/* ─── OPENING HOURS ─── */
+(()=>{
+  const days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const today=new Date().getDay();
+  const list=document.getElementById('hr-list');
+  if(!list)return;
+  days.forEach((d,i)=>{
+    const r=document.createElement('div');
+    r.className='hr-row'+(i===today?' today':'');
+    const op=i!==0;
+    r.innerHTML=`<span style="${i===today?'font-weight:700;color:var(--t1)':'color:var(--t2)'};font-size:.78rem;">${d}</span><span style="font-family:'Space Mono',monospace;font-size:.62rem;${op?'color:#22c55e':'color:#ef4444;text-decoration:line-through;opacity:.5'}">${op?'9AM – 11PM':'CLOSED'}</span>`;
+    list.appendChild(r);
+  });
+})();
+
+/* ─── FAQ ─── */
+function tFaq(el){el.classList.toggle('on');}
+
+/* ─── STATS COUNTER ─── */
+let counted=false;
+const cObs=new IntersectionObserver(en=>{
+  if(en[0].isIntersecting&&!counted){
+    counted=true;
+    function run(id,target,dur){
+      const el=document.getElementById(id);if(!el)return;
+      let s=0;const step=target/(dur/16);
+      const t=setInterval(()=>{s=Math.min(s+step,target);el.textContent=Math.floor(s)+'+';if(s>=target)clearInterval(t);},16);
+    }
+    run('s1',12,1600);run('s2',8,1400);run('s3',5,1200);
+  }
+},{threshold:.3});
+const stEl=document.getElementById('stats');
+if(stEl)cObs.observe(stEl);
+
+/* ─── REVEAL OBSERVER ─── */
+const rObs=new IntersectionObserver(en=>en.forEach(e=>{if(e.isIntersecting)e.target.classList.add('ok');}),{threshold:.08});
+document.querySelectorAll('.rv,.rl,.rr').forEach(el=>rObs.observe(el));
+
+/* ─── THEME MODE ─── */
+let dark=true;
+function toggleMode(){
+  dark=!dark;
+  document.documentElement.setAttribute('data-mode',dark?'dark':'light');
+  document.getElementById('sun-ic').style.display=dark?'none':'block';
+  document.getElementById('moon-ic').style.display=dark?'block':'none';
+  const t=document.getElementById('mode-tgl');
+  if(t)t.classList.toggle('on',dark);
+  localStorage.setItem('stMode',dark?'1':'0');
+}
+if(localStorage.getItem('stMode')==='0'){dark=true;toggleMode();}
+else{const t=document.getElementById('mode-tgl');if(t)t.classList.add('on');}
+
+/* ─── COLOR THEME ─── */
+function h2rgb(h){
+  return `${parseInt(h.slice(1,3),16)},${parseInt(h.slice(3,5),16)},${parseInt(h.slice(5,7),16)}`;
+}
+function applyC(v,val){
+  document.documentElement.style.setProperty(`--${v}`,val);
+  document.documentElement.style.setProperty(`--${v}r`,h2rgb(val));
+  const n=v.replace('c','');
+  const l=document.getElementById(`l${n}`),pv=document.getElementById(`pv${n}`);
+  if(l){l.textContent=val.toUpperCase();l.style.color=val;}
+  if(pv)pv.style.background=val;
+  document.getElementById(`p${n}`).value=val;
+  const s=JSON.parse(localStorage.getItem('stClr')||'{}');s[v]=val;
+  localStorage.setItem('stClr',JSON.stringify(s));
+  document.querySelectorAll('.swatch').forEach(sw=>sw.classList.remove('on'));
+}
+function applyPreset(c1,c2,c3){
+  applyC('c1',c1);applyC('c2',c2);applyC('c3',c3);
+  if(event&&event.currentTarget)event.currentTarget.classList.add('on');
+}
+function resetColors(){
+  applyPreset('#00D4FF','#7C3AED','#FF6B2B');
+  localStorage.removeItem('stClr');
+  document.querySelectorAll('.swatch')[0].classList.add('on');
+}
+(()=>{
+  const s=JSON.parse(localStorage.getItem('stClr')||'{}');
+  if(s.c1)applyC('c1',s.c1);
+  if(s.c2)applyC('c2',s.c2);
+  if(s.c3)applyC('c3',s.c3);
+})();
+
+/* ─── THEME PANEL ─── */
+function toggleThPanel(){document.getElementById('th-panel').classList.toggle('on');}
+
+/* ─── FORM SUBMIT ─── */
+function handleForm(e){
+  e.preventDefault();
+  const ok=document.getElementById('form-ok');
+  ok.style.display='block';e.target.reset();
+  setTimeout(()=>ok.style.display='none',5000);
+}
+
+/* ─── OFFER MODAL ─── */
+setTimeout(()=>document.getElementById('offer-modal').classList.add('on'),3800);
+
+/* ─── 3D CARD TILT ─── */
+document.querySelectorAll('.proj-card').forEach(card=>{
+  card.addEventListener('mousemove',e=>{
+    const r=card.getBoundingClientRect();
+    const rx=((e.clientY-r.top)/r.height-.5)*14;
+    const ry=((e.clientX-r.left)/r.width-.5)*-14;
+    card.style.transform=`perspective(600px) rotateX(${rx}deg) rotateY(${ry}deg) scale(1.02)`;
+    card.style.transition='transform .1s';
+  });
+  card.addEventListener('mouseleave',()=>{
+    card.style.transform='perspective(600px) rotateX(0) rotateY(0) scale(1)';
+    card.style.transition='transform .5s cubic-bezier(.4,0,.2,1)';
+  });
+});
+</script>
+</body>
+</html>
